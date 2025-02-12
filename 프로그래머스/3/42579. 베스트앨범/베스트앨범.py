@@ -1,33 +1,25 @@
-def solution(genres, plays):
-    answer = []
-    
-    d = {}
-    for i, (g, p) in enumerate(zip(genres, plays)):
-        if g not in d:
-            d[g] = {
-                "plays": [],
-                "total": 0
-                   }
-        d[g]["plays"].append((p, i))
-        d[g]["total"] += p
-        
-    total = []
-    for g, v in d.items():
-        d[g]["plays"].sort(key=lambda x: (x[0], -x[1]), reverse=True)
-        total.append((d[g]["total"], g))
+from collections import defaultdict
 
-    total.sort(key=lambda x: x[0], reverse=True)
+
+def solution(genres, plays):
     
-    print(d)
-    print(total)
-    for g in total:
-        genre = g[1]
-        first = d[genre]["plays"][0][1]
-        answer.append(first)
-        try:
-            second = d[genre]["plays"][1][1]
-            answer.append(second)
-        except:
-            pass
+    d = defaultdict(lambda: {
+        "songs": [],
+        "total": 0
+    })
+    for idx, (genre, play_count) in enumerate(zip(genres, plays)):
+        d[genre]["songs"].append((play_count, idx))
+        d[genre]["total"] += play_count 
+        
+    sorted_d = sorted(d.items(), key=lambda x: x[1]["total"], reverse=True)
+    
+    answer = []
+    for _, info in sorted_d:
+        info["songs"].sort(key=lambda x: (-x[0], x[1]))
+        
+        # slicing은 index out of range error 발생 x
+        tops = info["songs"][:2]
+        for _, idx in tops:
+            answer.append(idx)
         
     return answer
