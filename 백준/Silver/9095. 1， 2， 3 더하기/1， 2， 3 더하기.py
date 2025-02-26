@@ -1,5 +1,3 @@
-import sys
-
 # 1, 2, 3의 합으로 쪼개기
 # TODO 각 케이스별 순열 구하기
 # 먼저 모든 순열을 구하기 위한 방법을 고안해야 함.
@@ -17,7 +15,7 @@ import sys
 # (count, one, two, three)를 저장해두기
 # TODO 케이스별 경우의 수 계산
 # count! / one! * two! * three!
-
+import sys
 from math import factorial
 
 def solution(k):
