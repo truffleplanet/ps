@@ -16,7 +16,7 @@ for t in range(1, T+1):
     while stack:
         u = stack.pop()
         for v in graph[u]:
-            if v not in visited:
+            if not visited[v]:
                 visited[v] = 1
                 stack.append(v)
 
