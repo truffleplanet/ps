@@ -20,7 +20,5 @@ for _ in range(M):
     else:
         pass
 
-for c in right[::-1]:
-    left.append(c)
-
+left.extend(reversed(right))
 print("".join(left))
