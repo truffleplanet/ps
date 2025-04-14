@@ -11,10 +11,10 @@ def backtrack():
     
     for i in range(N):
         if not visited[i]:
-            visited[i] = 1
+            visited[i] = True
             path.append(arr[i])
             backtrack()
-            visited[i] = 0
+            visited[i] = False
             path.pop()
 
 backtrack()
