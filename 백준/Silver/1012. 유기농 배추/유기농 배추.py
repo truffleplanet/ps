@@ -1,13 +1,17 @@
 import sys
 
-sys.setrecursionlimit(10**9)
 def search(x, y):
     board[y][x] = -1
-    for idx in range(4):
-        cx = x + DX[idx]
-        cy = y + DY[idx]
-        if 0 <= cx < M and 0 <= cy < N and board[cy][cx] == 1:
-            search(cx, cy)
+    stack = [(x, y)]
+
+    while stack:
+        cx, cy = stack.pop()
+        for idx in range(4):
+            nx = cx + DX[idx]
+            ny = cy + DY[idx]
+            if 0 <= nx < M and 0 <= ny < N and board[ny][nx] == 1:
+                board[ny][nx] = -1
+                stack.append((nx, ny))
 
 input = sys.stdin.readline
 DX = [1, 0, -1, 0]
@@ -23,12 +27,11 @@ for _ in range(T):
         board[y][x] = 1
     
     count = 0
-    for x in range(M):
-        for y in range(N):
+    for y in range(N):
+        for x in range(M):
             if board[y][x] == 1:
                 search(x, y)
                 count += 1
-            else:
-                board[y][x] = -1
     
     print(count)
+    
