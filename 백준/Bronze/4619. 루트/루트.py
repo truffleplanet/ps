@@ -7,7 +7,6 @@ for line in data[:-1]:
     approx = round(b ** (1/n))
     l = approx - 1
     r = approx + 1
-    lst = [(abs(b - l ** n), l), (abs(b - approx ** n), approx), (abs(b - r ** n), approx)]
+    lst = [(abs(b - l ** n), l), (abs(b - approx ** n), approx), (abs(b - r ** n), r)]
     ans = min(lst)
     print(ans[1])
-    
