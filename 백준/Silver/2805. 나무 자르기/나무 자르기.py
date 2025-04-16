@@ -1,7 +1,8 @@
-# 0 <= H < max(trees)
-# sum(tree - H for tree in trees if tree > H) >= M
-N, M = map(int, input().split())
-trees = list(map(int, input().split()))
+import sys
+
+input = sys.stdin.readline
+N, M = map(int, input().strip().split())
+trees = list(map(int, input().strip().split()))
 
 low = 0
 high = max(trees)
