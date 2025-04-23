@@ -6,7 +6,7 @@ T = int(input())
 for _ in range(T):
     commands = list(input().strip())
     n = int(input())
-    arr = list(map(int, input().strip("[,], \n").replace(",", " ").split()))
+    arr = list(map(int, input().rstrip().strip("[]").replace(",", " ").split()))
 
     count_r = 0
     l_pop = 0
