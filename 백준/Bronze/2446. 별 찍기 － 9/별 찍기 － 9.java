@@ -4,28 +4,30 @@ public class Main {
 
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
-		final int N = sc.nextInt();
+		int N = sc.nextInt();
 		sc.close();
-		
-		for (int i = 0; i < N; i++) {
-			for (int q = 0; q < i; q++) {
-				System.out.print(" ");
+
+		int row = N * 2 - 1;
+
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < row; i++) {
+			if (i < N) {
+				for (int j = 0; j < i; j++) {
+					sb.append(" ");
+				}
+				for (int j = 0; j < row - (2 * i); j++) {
+					sb.append("*");
+				}
+			} else {
+				for (int j = 0; j < row - i - 1; j++) {
+					sb.append(" ");
+				}
+				for (int j = 0; j < (i - N + 1) * 2 + 1; j++) {
+					sb.append("*");
+				}
 			}
-			for (int p = 0; p < 2 * N - 2 * i - 1; p++) {
-				System.out.print("*");
-			}
-			System.out.println();
+			sb.append('\n');
 		}
-		
-		for (int i = 0; i < N - 1; i++) {
-			for (int q = 0; q < N - i - 2; q++) {
-				System.out.print(" ");
-			}
-			for (int p = 0; p < 3 + (2 * i); p++) {
-				System.out.print("*");
-			}
-			System.out.println();
-		}		
-		
+		System.out.println(sb);
 	}
 }
