@@ -1,61 +1,57 @@
 import java.util.Scanner;
 
 public class Main {
-
-	static int[] dr = { -1, -1, 1, 1, -1, 1, 0, 0 };
-	static int[] dc = { -1, 1, -1, 1, 0, 0, -1, 1 };
-	static int queenCnt;
-	static int cnt;
-	static int n;
+	static boolean[] col;
 	static boolean[][] map;
+	static int n;
+	static int count = 0;
+	static int[] dr = { 1, 1, -1, -1 };
+	static int[] dc = { 1, -1, 1, -1 };
 
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
 		n = sc.nextInt();
 		sc.close();
 
+		col = new boolean[n];
 		map = new boolean[n][n];
 
-		cnt = 0;
 		backtrack(0);
-		System.out.println(cnt);
+		System.out.println(count);
 
 	}
 
 	public static void backtrack(int r) {
-		if (r >= n) {
-			cnt++;
-			return;
+		if (r == n) {
+			count++;
 		}
 
-		for (int j = 0; j < n; j++) {
+		for (int c = 0; c < n; c++) {
 			boolean isOk = true;
-			for (int k = 0; k < dr.length; k++) {
-				int nr = r + dr[k];
-				int nc = j + dc[k];
-				if (nr < 0 || nr >= n || nc < 0 || nc >= n) {
-					continue;
-				}
 
-				int tr = nr;
-				int tc = nc;
-				while (tr >= 0 && tr < n && tc >= 0 && tc < n) {
-					if (map[tr][tc]) {
+			if (col[c])
+				continue;
+
+			for (int k = 0; k < 4; k++) {
+				int nr = r;
+				int nc = c;
+				while (nr >= 0 && nr < n && nc >= 0 && nc < n) {
+					if (map[nr][nc]) {
 						isOk = false;
 						break;
 					}
-					tr += dr[k];
-					tc += dc[k];
+					nr += dr[k];
+					nc += dc[k];
 				}
 				if (!isOk)
 					break;
 			}
+
 			if (isOk) {
-				map[r][j] = true;
+				map[r][c] = col[c] = true;
 				backtrack(r + 1);
-				map[r][j] = false;
+				map[r][c] = col[c] = false;
 			}
 		}
 	}
-
 }
