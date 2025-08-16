@@ -33,6 +33,13 @@ public class Solution {
 				}
 			}
 
+			int[][] pair = new int[N][N];
+			for (int i = 0; i < N; i++) {
+				for (int j = i + 1; j < N; j++) {
+					pair[i][j] = map[i][j] + map[j][i];
+				}
+			}
+
 			isSelected[0] = 1; // 고정.
 			int half = N / 2;
 			for (int i = N - 1; i > N - half; i--) { // half - 1개를 뒤에서 선택
@@ -45,14 +52,11 @@ public class Solution {
 				int sumA = 0;
 				int sumB = 0;
 				for (int i = 0; i < N; i++) {
-					for (int j = 0; j < N; j++) {
+					for (int j = i + 1; j < N; j++) {
 						if (isSelected[i] == 1 && isSelected[j] == 1) {
-							sumA += map[i][j];
-							continue;
-						}
-						if (isSelected[i] == 0 && isSelected[j] == 0) {
-							sumB += map[i][j];
-							continue;
+							sumA += pair[i][j];
+						} else if (isSelected[i] == 0 && isSelected[j] == 0) {
+							sumB += pair[i][j];
 						}
 					}
 				}
