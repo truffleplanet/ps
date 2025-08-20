@@ -79,8 +79,10 @@ public class Main {
 		int W = Integer.parseInt(st.nextToken());
 		int inventory = Integer.parseInt(st.nextToken());
 
+		int mapSize = H * W;
 		int[][] map = new int[H][W];
 		int blockTotal = inventory;
+		int minHeight = 257;
 
 		for (int i = 0; i < H; i++) {
 			st = new StringTokenizer(br.readLine());
@@ -88,14 +90,16 @@ public class Main {
 				int v = Integer.parseInt(st.nextToken());
 				map[i][j] = v;
 				blockTotal += v;
+				minHeight = Math.min(minHeight, v);
 			}
 		}
 
-		int maxHeight = blockTotal / (H * W);
+		int maxHeight = blockTotal / (mapSize);
+		maxHeight = Math.min(maxHeight, 256);
 		int height = 0;
 		int minTime = Integer.MAX_VALUE;
 
-		for (int h = 0; h <= maxHeight; h++) {
+		for (int h = minHeight; h <= maxHeight; h++) {
 			int inv = inventory;
 			int time = 0;
 			traversal: for (int i = 0; i < H; i++) {
