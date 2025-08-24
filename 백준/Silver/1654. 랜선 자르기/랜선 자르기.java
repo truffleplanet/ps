@@ -1,3 +1,8 @@
+/*
+ * 오버플로우는 항상 조심하자
+ * 
+ */
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,39 +12,41 @@ public class Main {
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st;
 
-		StringTokenizer st = new StringTokenizer(br.readLine());
+		st = new StringTokenizer(br.readLine());
 		int K = Integer.parseInt(st.nextToken());
 		int N = Integer.parseInt(st.nextToken());
-		
-		
-		int[] cables = new int[K];
-		long maxLen = 0;
-		for (int i =0; i < K; i++) {
-			cables[i] = Integer.parseInt(br.readLine());
-			maxLen = Math.max(maxLen, cables[i]);
+
+		int[] lengths = new int[K];
+		for (int i = 0; i < K; i++) {
+			lengths[i] = Integer.parseInt(br.readLine());
 		}
 
-		long right = Integer.MAX_VALUE;
-		long left = 0;
-		long best = 1;
-
-		while (left <= right) {
-			long mid = (right + left) / 2;
-			long cnt = 0;
-			for (int c : cables) {
-				cnt += c / mid;
-			}
-
-			if (cnt >= N) {
-				best = Math.max(mid, best);
-				left = mid + 1;
+		long hi = Integer.MAX_VALUE;
+		long lo = 1;
+		long ans = 1;
+		// [lo, hi]
+		while (lo <= hi) {
+			long mid = (lo + hi) >>> 1;
+			if (cut(lengths, mid, N)) {
+				ans = mid;
+				lo = mid + 1;
 			} else {
-				right = mid - 1;
+				hi = mid - 1;
 			}
 		}
 
-		System.out.println(best);
+		System.out.println(ans);
+	}
 
+	public static boolean cut(int[] arr, long h, int need) {
+		long sum = 0;
+		for (int i = 0; i < arr.length; i++) {
+			sum += arr[i] / h;
+			if (sum >= need)
+				return true;
+		}
+		return false;
 	}
 }
