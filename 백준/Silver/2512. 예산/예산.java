@@ -1,7 +1,6 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -25,21 +24,21 @@ public class Main {
 		st = new StringTokenizer(br.readLine());
 
 		long sum = 0;
+		int max = 0;
 		for (int i = 0; i < N; i++) {
 			arr[i] = Integer.parseInt(st.nextToken());
 			sum += arr[i];
+			max = Math.max(max, arr[i]);
 		}
-
-		Arrays.sort(arr);
 
 		int B = Integer.parseInt(br.readLine());
 
 		if (sum <= B) {
-			System.out.println(arr[N - 1]);
+			System.out.println(max);
 			return;
 		}
 
-		int hi = arr[N - 1];
+		int hi = max;
 		int lo = B / N;
 
 		int maxB = 0;
