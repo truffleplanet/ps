@@ -1,34 +1,22 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayDeque;
+import java.util.Queue;
 
 public class Solution {
 
-	static int[] dr = { 0, 0, 1, 1, 1, -1, -1, -1 };
-	static int[] dc = { 1, -1, 1, -1, 0, 1, -1, 0 };
+	final static int[] dr = { 0, 0, 1, 1, 1, -1, -1, -1 };
+	final static int[] dc = { 1, -1, 1, -1, 0, 1, -1, 0 };
 	static int N;
+	static char[][] map = new char[300][300];
+	static boolean[][] visited = new boolean[300][300];
 
-	// find
-	private static int find(int[] parents, int x) {
-		if (parents[x] == x)
-			return x;
+	// utilities
+	public static char countMine(int r, int c) {
+		if (map[r][c] == '*')
+			return '*';
 
-		parents[x] = find(parents, parents[x]);
-		return parents[x];
-	}
-
-	public static int union(int[] parents, int x, int y) {
-		int x_root = find(parents, x);
-		int y_root = find(parents, y);
-
-		if (x_root == y_root)
-			return 0;
-
-		parents[x_root] = y_root;
-		return 1;
-	}
-
-	public static char countMine(char[][] map, int r, int c) {
 		char cnt = '0';
 		for (int t = 0; t < 8; t++) {
 			int nr = r + dr[t];
@@ -44,11 +32,36 @@ public class Solution {
 	}
 
 	public static boolean boundCheck(int r, int c) {
-		if (r < 0 || r >= N || c < 0 || c >= N)
-			return false;
-		else
-			return true;
+		return !(r < 0 || r >= N || c < 0 || c >= N);
+	}
 
+	// core
+	public static void bfs(int r, int c) {
+		Queue<int[]> q = new ArrayDeque<>();
+		q.offer(new int[] { r, c });
+		visited[r][c] = true;
+
+		while (!q.isEmpty()) {
+			int[] u = q.poll();
+			r = u[0];
+			c = u[1];
+
+			for (int t = 0; t < 8; t++) {
+				int nr = r + dr[t];
+				int nc = c + dc[t];
+
+				if (!boundCheck(nr, nc))
+					continue;
+
+				if (visited[nr][nc])
+					continue;
+
+				visited[nr][nc] = true;
+				if (map[nr][nc] == '0') {
+					q.offer(new int[] { nr, nc });
+				}
+			}
+		}
 	}
 
 	public static void main(String[] args) throws NumberFormatException, IOException {
@@ -57,90 +70,58 @@ public class Solution {
 
 		int T = Integer.parseInt(br.readLine());
 
-		char[][] map = new char[300][300];
-		int[] parents = new int[300 * 300];
-		boolean[] seenRoot = new boolean[300 * 300];
-
 		for (int tc = 1; tc <= T; tc++) {
+			// 입력, 리셋
 			N = Integer.parseInt(br.readLine());
-			int nodes = N * N;
-
 			for (int i = 0; i < N; i++) {
 				map[i] = br.readLine().toCharArray();
 			}
-
-			// parents 배열 초기화.
-			// 노드는 0 부터 N * N -1까지니깐. 이 범위면 맞음.
-
-			for (int i = 0; i < nodes; i++) {
-				parents[i] = i;
-				seenRoot[i] = false;
-			}
-
 			for (int i = 0; i < N; i++) {
 				for (int j = 0; j < N; j++) {
+					visited[i][j] = false;
+				}
+			}
 
+			// 숫자 기록하기
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < N; j++) {
+					map[i][j] = countMine(i, j);
+				}
+			}
+
+			int ans = 0;
+
+			// bfs 하면서 방문 체크.
+			// 0에서 첫 bfs 해나간다면 기록하기
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < N; j++) {
 					if (map[i][j] == '*') {
+						visited[i][j] = true;
 						continue;
 					}
 
-					map[i][j] = countMine(map, i, j);
-				}
-			}
+					if (visited[i][j])
+						continue;
 
-			for (int i = 0; i < N; i++) {
-				for (int j = 0; j < N; j++) {
 					if (map[i][j] == '0') {
-						int x = (i * N) + j;
-						for (int t = 0; t < 8; t++) {
-
-							int nr = i + dr[t];
-							int nc = j + dc[t];
-							if (!boundCheck(nr, nc))
-								continue;
-
-							if (map[nr][nc] == '0') {
-								int y = (nr * N) + nc;
-								union(parents, x, y);
-							}
-						}
+						bfs(i, j);
+						ans++;
 					}
 				}
 			}
 
-			int zeroComponents = 0;
-			int isolatedComponents = 0;
+//			 방문하지 못한 곳 더하기.
 			for (int i = 0; i < N; i++) {
 				for (int j = 0; j < N; j++) {
-					if (map[i][j] == '0') {
-						int root = find(parents, i * N + j);
-						if (!seenRoot[root]) {
-							seenRoot[root] = true;
-							zeroComponents++;
-						}
-					} else if (map[i][j] != '*') {
-						boolean isolated = true;
-						for (int t = 0; t < 8; t++) {
-							int nr = i + dr[t];
-							int nc = j + dc[t];
-
-							if (!boundCheck(nr, nc))
-								continue;
-
-							if (map[nr][nc] == '0') {
-								isolated = false;
-								break;
-							}
-						}
-						if (isolated)
-							isolatedComponents++;
-					}
+					if (!visited[i][j])
+						ans++;
 				}
 			}
 
-			int ans = zeroComponents + isolatedComponents;
 			sb.append("#").append(tc).append(" ").append(ans).append("\n");
-		}
+
+		} // 모든 test case 종료
+
 		System.out.println(sb);
 	}
 
