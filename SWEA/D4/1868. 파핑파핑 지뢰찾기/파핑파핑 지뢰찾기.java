@@ -6,6 +6,7 @@ public class Solution {
 
 	static int[] dr = { 0, 0, 1, 1, 1, -1, -1, -1 };
 	static int[] dc = { 1, -1, 1, -1, 0, 1, -1, 0 };
+	static int N;
 
 	// find
 	private static int find(int[] parents, int x) {
@@ -27,19 +28,27 @@ public class Solution {
 		return 1;
 	}
 
-	public static char countMine(char[][] map, int N, int r, int c) {
+	public static char countMine(char[][] map, int r, int c) {
 		char cnt = '0';
 		for (int t = 0; t < 8; t++) {
 			int nr = r + dr[t];
 			int nc = c + dc[t];
 
-			if (nr < 0 || nr >= N || nc < 0 || nc >= N)
+			if (!boundCheck(nr, nc))
 				continue;
 
 			if (map[nr][nc] == '*')
 				cnt++;
 		}
 		return cnt;
+	}
+
+	public static boolean boundCheck(int r, int c) {
+		if (r < 0 || r >= N || c < 0 || c >= N)
+			return false;
+		else
+			return true;
+
 	}
 
 	public static void main(String[] args) throws NumberFormatException, IOException {
@@ -53,7 +62,7 @@ public class Solution {
 		boolean[] seenRoot = new boolean[300 * 300];
 
 		for (int tc = 1; tc <= T; tc++) {
-			int N = Integer.parseInt(br.readLine());
+			N = Integer.parseInt(br.readLine());
 			int nodes = N * N;
 
 			for (int i = 0; i < N; i++) {
@@ -75,7 +84,7 @@ public class Solution {
 						continue;
 					}
 
-					map[i][j] = countMine(map, N, i, j);
+					map[i][j] = countMine(map, i, j);
 				}
 			}
 
@@ -87,7 +96,7 @@ public class Solution {
 
 							int nr = i + dr[t];
 							int nc = j + dc[t];
-							if (nr < 0 || nr >= N || nc < 0 || nc >= N)
+							if (!boundCheck(nr, nc))
 								continue;
 
 							if (map[nr][nc] == '0') {
@@ -115,7 +124,7 @@ public class Solution {
 							int nr = i + dr[t];
 							int nc = j + dc[t];
 
-							if (nr < 0 || nr >= N || nc < 0 || nc >= N)
+							if (!boundCheck(nr, nc))
 								continue;
 
 							if (map[nr][nc] == '0') {
