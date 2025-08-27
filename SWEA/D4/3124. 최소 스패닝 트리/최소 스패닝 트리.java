@@ -1,14 +1,14 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
 public class Solution {
 
-	static final int MAX_VERTICES = 100_001;
-	static final int MAX_EDGES = 200_001;
-	static int[] parents = new int[MAX_VERTICES];
+	static final int MAX_EDGES = 400_002;
 	static Edge[] EDGE_POOL = new Edge[MAX_EDGES];
 	static int CUR_E;
 	static {
@@ -18,9 +18,12 @@ public class Solution {
 	}
 
 	static class Edge implements Comparable<Edge> {
-		int from;
 		int to;
 		int weight;
+
+		private Edge() {
+
+		}
 
 		@Override
 		public int compareTo(Edge o) {
@@ -28,37 +31,11 @@ public class Solution {
 		}
 	}
 
-	static Edge getEdge(int x, int y, int w) {
+	static Edge getEdge(int to, int w) {
 		Edge e = EDGE_POOL[CUR_E++];
-		e.from = x;
-		e.to = y;
+		e.to = to;
 		e.weight = w;
 		return e;
-	}
-
-	static void make(int N) {
-		for (int i = 0; i <= N; i++) {
-			parents[i] = i;
-		}
-	}
-
-	static int find(int x) {
-		if (x == parents[x])
-			return x;
-
-		parents[x] = find(parents[x]);
-		return parents[x];
-	}
-
-	static boolean union(int x, int y) {
-		int x_root = find(x);
-		int y_root = find(y);
-
-		if (x_root == y_root)
-			return false;
-
-		parents[x_root] = y_root;
-		return true;
 	}
 
 	public static void main(String[] args) throws NumberFormatException, IOException {
@@ -66,39 +43,58 @@ public class Solution {
 		StringTokenizer st;
 		StringBuilder sb = new StringBuilder();
 
-		Edge[] edges = new Edge[MAX_EDGES];
-
 		int T = Integer.parseInt(br.readLine());
 
 		for (int tc = 1; tc <= T; tc++) {
+			CUR_E = 0;
+
 			st = new StringTokenizer(br.readLine());
 			int V = Integer.parseInt(st.nextToken());
 			int E = Integer.parseInt(st.nextToken());
 
-			// init
-			make(V);
-			CUR_E = 0;
+			List<List<Edge>> graph = new ArrayList<>();
+
+			for (int i = 0; i <= V; i++) {
+				graph.add(new ArrayList<>());
+			}
 
 			for (int i = 0; i < E; i++) {
 				st = new StringTokenizer(br.readLine());
 				int u = Integer.parseInt(st.nextToken());
 				int v = Integer.parseInt(st.nextToken());
 				int c = Integer.parseInt(st.nextToken());
-				edges[i] = getEdge(u, v, c);
+				graph.get(u).add(getEdge(v, c));
+				graph.get(v).add(getEdge(u, c));
 			}
 
-			Arrays.sort(edges, 0, E);
-
 			long weightSum = 0;
-			int edgeCnt = 0;
-			for (int i = 0; i < E; i++) {
-				if (union(edges[i].from, edges[i].to)) {
-					edgeCnt++;
-					weightSum += edges[i].weight;
-				}
+			int cnt = 0;
+			boolean visited[] = new boolean[V + 1];
+			PriorityQueue<Edge> pq = new PriorityQueue<>();
+			for (Edge e : graph.get(1)) {
+				pq.offer(e);
+			}
+			visited[1] = true;
+			cnt++;
 
-				if (edgeCnt == E - 1)
+			while (cnt < V) {
+				Edge e = pq.poll();
+
+				if (e == null)
 					break;
+
+				if (visited[e.to])
+					continue;
+
+				visited[e.to] = true;
+				weightSum += e.weight;
+				cnt++;
+
+				for (Edge o : graph.get(e.to)) {
+					if (visited[o.to])
+						continue;
+					pq.offer(o);
+				}
 			}
 
 			sb.append("#").append(tc).append(" ").append(weightSum).append("\n");
