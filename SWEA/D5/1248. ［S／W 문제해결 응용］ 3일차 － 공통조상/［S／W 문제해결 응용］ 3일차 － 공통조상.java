@@ -7,6 +7,14 @@ import java.util.StringTokenizer;
 public class Solution {
 
 	static int size;
+	static final int MAX_NODE = 10_000;
+	static int CUR_N = 0;
+	static Node[] NODE_POOL = new Node[MAX_NODE];
+	static {
+		for (int i = 0; i < MAX_NODE; i++) {
+			NODE_POOL[i] = new Node();
+		}
+	}
 
 	static class Node {
 		Node parent;
@@ -14,11 +22,18 @@ public class Solution {
 		Node right;
 		int id;
 
-		public Node(int id) {
-			super();
-			this.id = id;
-		}
+		private Node() {
 
+		}
+	}
+
+	static Node getNode(int val) {
+		Node out = NODE_POOL[CUR_N++];
+		out.id = val;
+		out.parent = null;
+		out.left = null;
+		out.right = null;
+		return out;
 	}
 
 	static void inorder(Node x) {
@@ -38,6 +53,7 @@ public class Solution {
 		int T = Integer.parseInt(br.readLine());
 
 		for (int tc = 1; tc <= T; tc++) {
+			CUR_N = 0;
 			st = new StringTokenizer(br.readLine());
 			int V = Integer.parseInt(st.nextToken());
 			int E = Integer.parseInt(st.nextToken());
@@ -46,7 +62,7 @@ public class Solution {
 
 			Node[] nodes = new Node[V + 1];
 			for (int i = 1; i <= V; i++) {
-				nodes[i] = new Node(i);
+				nodes[i] = getNode(i);
 			}
 
 			// 간선 입력
