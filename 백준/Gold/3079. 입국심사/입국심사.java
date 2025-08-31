@@ -36,16 +36,14 @@ public class Main {
 		int N = Integer.parseInt(st.nextToken());
 		int M = Integer.parseInt(st.nextToken());
 
-		int[] times = new int[N];
-		long maxT = 0;
+		long[] times = new long[N];
+		long minT = Long.MAX_VALUE;
 		for (int i = 0; i < N; i++) {
-			times[i] = Integer.parseInt(br.readLine());
-			maxT = Math.max(maxT, times[i]);
+			times[i] = Long.parseLong(br.readLine());
+			minT = Math.min(minT, times[i]);
 		}
 		long lo = 0;
-		long hi = maxT * M;
-//		System.out.println(Long.MAX_VALUE);
-		long bestTime = Long.MAX_VALUE;
+		long hi = minT * M;
 		// inclusive
 		while (lo <= hi) {
 			long mid = lo + ((hi - lo) >>> 1);
@@ -58,13 +56,12 @@ public class Main {
 			}
 
 			if (sum >= M) {
-				bestTime = Math.min(bestTime, mid);
 				hi = mid - 1; // 좌측 탐색
 			} else {
 				lo = mid + 1;
 			}
 		}
 
-		System.out.println(bestTime);
+		System.out.println(lo);
 	}
 }
