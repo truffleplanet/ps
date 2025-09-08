@@ -111,13 +111,13 @@ public class Main {
 					continue;
 
 				if (dist[nr][nc][k] > nm) {
-//					for (int t = k; t <= K; t++) {
-//						if (dist[nr][nc][t] > nm) {
-//							dist[nr][nc][t] = nm;
-//						} else {
-//							break;
-//						}
-//					}
+					for (int t = k; t <= K; t++) {
+						if (dist[nr][nc][t] > nm) {
+							dist[nr][nc][t] = nm;
+						} else {
+							break;
+						}
+					}
 					dist[nr][nc][k] = nm;
 					pq.offer(new HeapNode(nr, nc, k, nm));
 
@@ -138,13 +138,13 @@ public class Main {
 						continue;
 
 					if (dist[nr][nc][nk] > nm) {
-//						for (int t = nk; t <= K; t++) {
-//							if (dist[nr][nc][t] > nm) {
-//								dist[nr][nc][t] = nm;
-//							} else {
-//								break;
-//							}
-//						}
+						for (int t = nk; t <= K; t++) {
+							if (dist[nr][nc][t] > nm) {
+								dist[nr][nc][t] = nm;
+							} else {
+								break;
+							}
+						}
 						dist[nr][nc][nk] = nm;
 						pq.offer(new HeapNode(nr, nc, nk, nm));
 
