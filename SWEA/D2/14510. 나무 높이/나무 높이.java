@@ -42,7 +42,7 @@ public class Solution {
 			}
 
 			int lo = 0;
-			int hi = sum * 2;
+			int hi = (need1 + need2) * 2;
 
 			// [lo, hi)
 			while (lo < hi) {
