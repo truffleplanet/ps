@@ -17,67 +17,59 @@ public class Main {
 		int K = Integer.parseInt(st.nextToken());
 		int C = Integer.parseInt(st.nextToken());
 
-		int[] arr = new int[N];
+		int[] belt = new int[N];
 		for (int i = 0; i < N; i++) {
-			arr[i] = Integer.parseInt(br.readLine());
+			belt[i] = Integer.parseInt(br.readLine());
 		}
 
-		int[] cnt = new int[D + 1];
+		int[] sushiCount = new int[D + 1];
 
-		int ans = 0;
-		int now = 1;
+		int maxKinds = 0;
+		int currentKinds = 1;
 		for (int i = 0; i < K; i++) {
-			int x = arr[i];
-			if (x == C)
-				continue;
-			if (cnt[x] == 0) {
-				cnt[x]++;
-				now++;
-			} else {
-				cnt[x]++;
-			}
+			currentKinds = addSushi(belt[i], sushiCount, C, currentKinds);
 		}
 
-		ans = now;
+		maxKinds = currentKinds;
 
-		if (ans == K + 1)
-
-		{
-			System.out.println(ans);
+		if (maxKinds == K + 1) {
+			System.out.println(maxKinds);
 			return;
 		}
 
 		for (int i = K; i < N + K; i++) {
-			int prev = arr[i - K];
-			int nx = (i >= N) ? (i % N) : i;
-			int next = arr[nx];
+			int prev = belt[i - K];
+			int next = belt[i % N];
 
-			if (prev == C) {
-				;
-			} else if (cnt[prev] == 1) {
-				cnt[prev]--;
-				now--;
-			} else {
-				cnt[prev]--;
-			}
+			currentKinds = removeSushi(prev, sushiCount, C, currentKinds);
+			currentKinds = addSushi(next, sushiCount, C, currentKinds);
 
-			if (next == C) {
-				;
-			} else if (cnt[next] == 0) {
-				cnt[next]++;
-				now++;
-			} else {
-				cnt[next]++;
-			}
+			maxKinds = Math.max(maxKinds, currentKinds);
 
-			ans = Math.max(ans, now);
-
-			if (ans == K + 1) {
-				System.out.println(ans);
+			if (maxKinds == K + 1) {
+				System.out.println(maxKinds);
 				return;
 			}
 		}
 
-		System.out.println(ans);
+		System.out.println(maxKinds);
+	}
+
+	private static int addSushi(int sushi, int[] sushiCount, int coupon, int currentKinds) {
+		if (sushi == coupon)
+			return currentKinds;
+		if (sushiCount[sushi] == 0)
+			currentKinds++;
+		sushiCount[sushi]++;
+		return currentKinds;
+	}
+
+	private static int removeSushi(int sushi, int[] sushiCount, int coupon, int currentKinds) {
+		if (sushi == coupon)
+			return currentKinds;
+		if (sushiCount[sushi] == 1)
+			currentKinds--;
+		sushiCount[sushi]--;
+		return currentKinds;
 	}
 }
