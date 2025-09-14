@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 /*
@@ -36,7 +37,7 @@ public class Main {
 
 	static boolean[][] isRoad;
 	static int N;
-	static int ans;
+	static int[][][] dp;
 
 	public static void main(String[] args) throws NumberFormatException, IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -57,37 +58,47 @@ public class Main {
 			}
 		}
 
-		ans = 0;
-		dfs(sr, sc, R);
-		System.out.println(ans);
+		dp = new int[N][N][3];
+
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				Arrays.fill(dp[i][j], -1);
+			}
+		}
+
+		System.out.println(dfs(sr, sc, R));
 
 	}
 
-	static void dfs(int r, int c, int dir) {
+	static int dfs(int r, int c, int dir) {
 
 		if (r == N - 1 && c == N - 1) {
-			ans++;
-			return;
+			return 1;
 		}
+		if (dp[r][c][dir] != -1)
+			return dp[r][c][dir];
 
+		int ways = 0;
 		if (dir == R) {
 			if (canRight(r, c))
-				dfs(r, c + 1, R);
+				ways += dfs(r, c + 1, R);
 			if (canDiag(r, c))
-				dfs(r + 1, c + 1, RD);
+				ways += dfs(r + 1, c + 1, RD);
 		} else if (dir == RD) {
 			if (canRight(r, c))
-				dfs(r, c + 1, R);
+				ways += dfs(r, c + 1, R);
 			if (canDiag(r, c))
-				dfs(r + 1, c + 1, RD);
+				ways += dfs(r + 1, c + 1, RD);
 			if (canDown(r, c))
-				dfs(r + 1, c, D);
+				ways += dfs(r + 1, c, D);
 		} else if (dir == D) {
 			if (canDiag(r, c))
-				dfs(r + 1, c + 1, RD);
+				ways += dfs(r + 1, c + 1, RD);
 			if (canDown(r, c))
-				dfs(r + 1, c, D);
+				ways += dfs(r + 1, c, D);
 		}
+
+		return dp[r][c][dir] = ways;
 	}
 
 	static boolean canRight(int r, int c) {
