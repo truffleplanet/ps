@@ -13,26 +13,34 @@ public class Main {
 		dp = new int[N + 1];
 
 		Arrays.fill(dp, Integer.MAX_VALUE);
-		dp[N] = 0;
-		dfs(N);
+		dp[0] = 0;
 
-		if (dp[0] == Integer.MAX_VALUE) {
+		for (int i = 1; i <= N; i++) {
+			if (i - 2 >= 0 && dp[i - 2] != Integer.MAX_VALUE) {
+				dp[i] = Math.min(dp[i], dp[i - 2] + 1);
+			}
+			if (i - 5 >= 0 && dp[i - 5] != Integer.MAX_VALUE) {
+				dp[i] = Math.min(dp[i], dp[i - 5] + 1);
+			}
+		}
+
+		if (dp[N] == Integer.MAX_VALUE) {
 			System.out.println(-1);
 		} else {
-			System.out.println(dp[0]);
+			System.out.println(dp[N]);
 		}
 
 	}
-
-	static void dfs(int cur) {
-		if (cur - 2 >= 0 && dp[cur - 2] > dp[cur] + 1) {
-			dp[cur - 2] = dp[cur] + 1;
-			dfs(cur - 2);
-		}
-
-		if (cur - 5 >= 0 && dp[cur - 5] > dp[cur] + 1) {
-			dp[cur - 5] = dp[cur] + 1;
-			dfs(cur - 5);
-		}
-	}
+//
+//	static void dfs(int cur) {
+//		if (cur - 2 >= 0 && dp[cur - 2] > dp[cur] + 1) {
+//			dp[cur - 2] = dp[cur] + 1;
+//			dfs(cur - 2);
+//		}
+//
+//		if (cur - 5 >= 0 && dp[cur - 5] > dp[cur] + 1) {
+//			dp[cur - 5] = dp[cur] + 1;
+//			dfs(cur - 5);
+//		}
+//	}
 }
