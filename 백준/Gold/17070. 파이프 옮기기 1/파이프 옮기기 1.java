@@ -34,98 +34,76 @@ public class Main {
 	 * 오른쪽 가면, 무조건 - 아래 가면 무조건 | 대각가면 무조건 \
 	 */
 
-	static int[][] grid;
+	static boolean[][] isRoad;
 	static int N;
 	static int ans;
-
-	static class Node {
-		int r;
-		int c;
-		int state;
-
-		public Node(int r, int c, int state) {
-			super();
-			this.r = r;
-			this.c = c;
-			this.state = state;
-		}
-
-	}
 
 	public static void main(String[] args) throws NumberFormatException, IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st;
 
 		N = Integer.parseInt(br.readLine());
-		grid = new int[N][N];
+		isRoad = new boolean[N][N];
 		int sr = 0;
 		int sc = 1;
 
 		for (int i = 0; i < N; i++) {
 			st = new StringTokenizer(br.readLine());
 			for (int j = 0; j < N; j++) {
-				grid[i][j] = Integer.parseInt(st.nextToken());
+				char ch = st.nextToken().charAt(0);
+				if (ch == '0') {
+					isRoad[i][j] = true;
+				}
 			}
 		}
 
 		ans = 0;
-		dfs(new Node(0, 1, R));
+		dfs(sr, sc, R);
 		System.out.println(ans);
 
 	}
 
-	static boolean canMove(Node x, int mType) {
-		int r = x.r;
-		int c = x.c;
+	static void dfs(int r, int c, int dir) {
 
-		switch (mType) {
-		case R: {
-			int nc = c + 1;
-			return nc < N && grid[r][nc] == 0;
-		}
-		case RD: {
-			int nr = r + 1;
-			int nc = c + 1;
-			return nr < N && nc < N && grid[nr][nc] == 0 && grid[r][nc] == 0 && grid[nr][c] == 0;
-		}
-		case D: {
-			int nr = r + 1;
-			return nr < N && grid[nr][c] == 0;
-		}
-		}
-		return false;
-	}
-
-	static void dfs(Node x) {
-
-		if (x.r == N - 1 && x.c == N - 1) {
+		if (r == N - 1 && c == N - 1) {
 			ans++;
 			return;
 		}
 
-		switch (x.state) {
-		case R:
-			if (canMove(x, R))
-				dfs(new Node(x.r, x.c + 1, R));
-			if (canMove(x, RD))
-				dfs(new Node(x.r + 1, x.c + 1, RD));
-			break;
-		case RD:
-			if (canMove(x, R))
-				dfs(new Node(x.r, x.c + 1, R));
-			if (canMove(x, RD))
-				dfs(new Node(x.r + 1, x.c + 1, RD));
-			if (canMove(x, D))
-				dfs(new Node(x.r + 1, x.c, D));
-			break;
-		case D:
-			if (canMove(x, RD))
-				dfs(new Node(x.r + 1, x.c + 1, RD));
-			if (canMove(x, D))
-				dfs(new Node(x.r + 1, x.c, D));
-			break;
+		if (dir == R) {
+			if (canRight(r, c))
+				dfs(r, c + 1, R);
+			if (canDiag(r, c))
+				dfs(r + 1, c + 1, RD);
+		} else if (dir == RD) {
+			if (canRight(r, c))
+				dfs(r, c + 1, R);
+			if (canDiag(r, c))
+				dfs(r + 1, c + 1, RD);
+			if (canDown(r, c))
+				dfs(r + 1, c, D);
+		} else if (dir == D) {
+			if (canDiag(r, c))
+				dfs(r + 1, c + 1, RD);
+			if (canDown(r, c))
+				dfs(r + 1, c, D);
 		}
+	}
 
+	static boolean canRight(int r, int c) {
+		int nc = c + 1;
+		return nc < N && isRoad[r][nc];
+	}
+
+	static boolean canDiag(int r, int c) {
+		int nr = r + 1;
+		int nc = c + 1;
+		return nr < N && nc < N && isRoad[r][nc] && isRoad[nr][c] && isRoad[nr][nc];
+	}
+
+	static boolean canDown(int r, int c) {
+		int nr = r + 1;
+		return nr < N && isRoad[nr][c];
 	}
 
 }
