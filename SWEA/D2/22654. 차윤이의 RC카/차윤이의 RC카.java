@@ -47,8 +47,8 @@ public class Solution {
 				int c = sc;
 
 				for (int i = 0; i < L; i++) {
-					switch (cmd[i]) {
-					case 'A':
+					char ch = cmd[i];
+					if (ch == 'A') {
 						int nr = r + DR[dir];
 						int nc = c + DC[dir];
 
@@ -60,13 +60,10 @@ public class Solution {
 
 						r = nr;
 						c = nc;
-						break;
-					case 'L':
+					} else if (ch == 'L') {
 						dir = (dir + 3) % 4;
-						break;
-					case 'R':
+					} else {
 						dir = (dir + 1) % 4;
-						break;
 					}
 				}
 				int ans = 0;
