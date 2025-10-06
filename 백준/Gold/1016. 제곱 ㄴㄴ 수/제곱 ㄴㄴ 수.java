@@ -65,43 +65,38 @@ public class Main {
 		long max = Long.parseLong(st.nextToken());
 
 		int sqrtMax = (int) Math.sqrt(max);
+		int range = (int) (max - min) + 1;
 		boolean[] isPrime = new boolean[sqrtMax + 1];
+		boolean[] isNotNoNo = new boolean[range];
 		Arrays.fill(isPrime, true);
 		isPrime[0] = isPrime[1] = false;
 
-		for (int i = 2; i * i <= sqrtMax; i++) {
+		int sqrtsqrt = (int) Math.sqrt(sqrtMax);
+		for (int i = 2; i <= sqrtMax; i++) {
 			if (isPrime[i]) {
-				for (int j = i * i; j <= sqrtMax; j += i) {
-					isPrime[j] = false;
-				}
-			}
-		}
-
-		int range = (int) (max - min) + 1;
-		boolean[] isNoNo = new boolean[range];
-		Arrays.fill(isNoNo, true);
-
-		for (int p = 2; p <= sqrtMax; p++) {
-			if (isPrime[p]) {
-				long square = (long) p * p;
-
-				// 시작 위치 구하기 (최솟값보다 같거나 큰 가장 가까운 제곱수 배수)
+				// 1. 제곱 ㄴㄴ 수가 아닌 것 찾기
+				long square = (long) i * i;
 				long start = (min / square) * square;
 				if (start < min) {
 					start += square;
 				}
-
-				for (long i = start; i <= max; i += square) {
-					int key = (int) (i - min);
-					isNoNo[key] = false;
+				for (long k = start; k <= max; k += square) {
+					int key = (int) (k - min);
+					isNotNoNo[key] = true;
 				}
 
+				// 2. 에라토스테네스의 채
+				if (i <= sqrtsqrt) {
+					for (int j = i * i; j <= sqrtMax; j += i) {
+						isPrime[j] = false;
+					}
+				}
 			}
 		}
 
 		int ans = 0;
 		for (int i = 0; i < range; i++) {
-			if (isNoNo[i])
+			if (!isNotNoNo[i])
 				ans++;
 		}
 
