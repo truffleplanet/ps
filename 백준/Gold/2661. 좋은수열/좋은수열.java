@@ -5,41 +5,42 @@ import java.io.InputStreamReader;
 public class Main {
 
 	static int N;
+    static char[] toChar = {'0', '1', '2', '3'};
 
 	public static void main(String[] args) throws NumberFormatException, IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader((System.in)));
-		N = Integer.parseInt(br.readLine());
+        N = Integer.parseInt(br.readLine());
 
-		backtrack(new StringBuilder().append('1'));
+        char[] s = new char[N];
+		backtrack(s, 0);
+        
 	}
 
-	public static boolean backtrack(StringBuilder k) {
-		if (k.length() == N) {
-			System.out.println(k.toString());
+	public static boolean backtrack(char[] s, int len) {
+		if (len == N) {
+            System.out.println(s);
 			return true;
 		}
 
 		for (int i = 1; i <= 3; i++) {
-			k.append(i);
-			if (isGood(k)) {
-				if (backtrack(k))
+			s[len] = toChar[i];
+			if (isGood(s, len + 1)) {
+				if (backtrack(s, len + 1))
 					return true;
 			}
-			k.deleteCharAt(k.length() - 1);
 		}
 		return false;
 	}
 
-	public static boolean isGood(StringBuilder k) {
-		int K = k.length();
-		int R = K / 2;
+	public static boolean isGood(char[] s, int len) {
+		int R = len / 2;
 
-		for (int s = 1; s <= R; s++) {
+		for (int k = 1; k <= R; k++) {
 			boolean isMatch = true;
-			int i = K - 1;
-			int j = i - s;
-			for (int c = 0; c < s; c++) {
-				if (k.charAt(i) != k.charAt(j)) {
+			int i = len - 1;
+			int j = i - k;
+			for (int c = 0; c < k; c++) {
+				if (s[i] != s[j]) {
 					isMatch = false;
 					break;
 				}
