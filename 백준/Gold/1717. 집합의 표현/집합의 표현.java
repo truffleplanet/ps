@@ -1,88 +1,70 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.util.*;
+import java.lang.*;
+import java.io.*;
 
-public class Main {
-	final static int CMD_UNION = 0;
-	final static int CMD_ISUNION = 1;
+class Main {
 
-	public static class DisjointSet {
+    static int[] parents;
 
-		int range;
-		int[] parents;
+    static void init(int n) {
+        parents = new int[n + 1];
+        for (int i = 0; i <= n; i++) {
+            parents[i] = i;
+        }
+    }
+    
+    static int find(int x) {
+        if (x == parents[x])
+            return x;
+        parents[x] = find(parents[x]);
+        return parents[x];
+    }
 
-		public DisjointSet(int range) {
-			super();
-			this.range = range;
-			parents = new int[range + 1];
-			for (int i = 0; i <= range; i++) {
-				parents[i] = i;
-			}
-		}
+    static void union(int x, int y) {
+        int x_root = find(x);
+        int y_root = find(y);
 
-		private int find(int x) {
-			if (x == parents[x])
-				return x;
-			parents[x] = find(parents[x]); // path compression
-			return parents[x];
-		}
+        if (x_root == y_root) {
+            return;
+        }
 
-		public void union(int x, int y) {
-			int x_Root = find(x);
-			int y_Root = find(y);
-			if (x_Root == y_Root)
-				return;
-			parents[x_Root] = y_Root;
-		}
+        parents[x_root] = y_root;
+        return;
+    }
+    
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringBuilder sb = new StringBuilder();
+        StringTokenizer st;
+        final String YES = "YES";
+        final String NO = "NO";
 
-		public boolean isUnion(int x, int y) {
-			int x_Root = find(x);
-			int y_Root = find(y);
-			if (x_Root == y_Root)
-				return true;
-			else
-				return false;
-		}
+        st = new StringTokenizer(br.readLine());
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
 
-	}
+        init(n);
 
-	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st;
-		StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < m; i++) {
+            st = new StringTokenizer(br.readLine());
+            int cmd = Integer.parseInt(st.nextToken());
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
 
-		// 입력
-		st = new StringTokenizer(br.readLine());
+            if (cmd == 0) {
+                union(a, b);
+            } else if (cmd == 1) {
+                int root_a = find(a);
+                int root_b = find(b);
 
-		int N = Integer.parseInt(st.nextToken());
-		int M = Integer.parseInt(st.nextToken());
+                if (root_a == root_b) {
+                    sb.append(YES).append('\n');
+                } else {
+                    sb.append(NO).append('\n');
+                }
+            }
+        }
 
-		DisjointSet d = new DisjointSet(N);
-
-		for (int i = 0; i < M; i++) {
-			st = new StringTokenizer(br.readLine());
-			int cmd = Integer.parseInt(st.nextToken());
-			int x = Integer.parseInt(st.nextToken());
-			int y = Integer.parseInt(st.nextToken());
-
-			switch (cmd) {
-			case CMD_UNION:
-				d.union(x, y);
-				break;
-			case CMD_ISUNION:
-				if (d.isUnion(x, y))
-					sb.append("YES");
-				else
-					sb.append("NO");
-
-				sb.append("\n");
-				break;
-			}
-		}
-
-		System.out.println(sb);
-
-	}
-
+        System.out.println(sb);
+    }
 }
