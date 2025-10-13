@@ -17,6 +17,10 @@ dfs를 모든 지점에서 해봐야되는데
 더 좋은 방법 있는가?
 지금은 모르겠음 .일단 2초 통과 가능한 로직이니 ㄱㄱ
 
+// 2
+자식까지 쭉 내려가며
+각 루트는 자기가 가진 자손까지의 경로중 가장 긴 경로 반환하기.
+top-down dp로 구현하기 
 */
 
 // The main method must be in a class named "Main".
@@ -34,19 +38,22 @@ class Main {
 
     static int longgest;
     static List<List<Edge>> tree;
-    static boolean[] visited;
 
     
-    static void dfs(int u, int dist) {
-        longgest = Math.max(longgest, dist);
-        
-        for (Edge v : tree.get(u)) {
-            if (!visited[v.to]) {
-                visited[v.to] = true;
-                dfs(v.to, dist + v.w);
-                visited[v.to] = false;
+    static int dfs(int u) {
+        int best1 = 0;
+        int best2 = 0;
+        for (Edge e : tree.get(u)) {
+            int h = dfs(e.to) + e.w;
+            if (h > best1) {
+                best2 = best1;
+                best1 = h;
+            } else if (h > best2) {
+                best2 = h;
             }
         }
+        longgest = Math.max(longgest, best1 + best2);
+        return best1;
     }
     
     public static void main(String[] args) throws Exception {
@@ -65,17 +72,10 @@ class Main {
             int v = Integer.parseInt(st.nextToken());
             int w = Integer.parseInt(st.nextToken());
             tree.get(u).add(new Edge(v, w));
-            tree.get(v).add(new Edge(u, w));
         }
         
-        visited = new boolean[N + 1];
         longgest = 0;
-        for (int i = 1; i <= N; i++) {
-            visited[i] = true;
-            dfs(i, 0);
-            visited[i] = false;
-        }
-
+        dfs(1);
         System.out.println(longgest);
     }
 }
