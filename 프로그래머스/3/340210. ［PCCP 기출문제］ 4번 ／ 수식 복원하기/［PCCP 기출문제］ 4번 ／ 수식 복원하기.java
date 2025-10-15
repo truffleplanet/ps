@@ -114,11 +114,11 @@ class Solution {
     public String calculate(String strA, String strB, String op, int base) {
         int a = 0;
         int b = 0;
-        for (int i = 0; i < strA.length(); i++) {
-            a += (strA.charAt(i) - '0') * ((int) Math.pow(base, strA.length() - i - 1));
+        for (char ch : strA.toCharArray()) {
+            a = a * base + (ch - '0');
         }
-        for (int i = 0; i < strB.length(); i++) {
-            b += (strB.charAt(i) - '0') * ((int) Math.pow(base, strB.length() - i - 1));
+        for (char ch : strB.toCharArray()) {
+            b = b * base + (ch - '0');
         }
         
         int c;
