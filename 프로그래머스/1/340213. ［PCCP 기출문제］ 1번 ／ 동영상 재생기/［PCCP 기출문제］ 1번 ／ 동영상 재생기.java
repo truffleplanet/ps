@@ -33,15 +33,15 @@ class Solution {
     }
     
     int toTime(String time) {
-        int min = 10 * (time.charAt(0) - '0') + time.charAt(1) - '0';
-        int sec = 10 * (time.charAt(3) - '0') + time.charAt(4) - '0';
+        int min = Integer.parseInt(time.substring(0, 2));
+        int sec = Integer.parseInt(time.substring(3, 5));
         return 60 * min + sec;
     }
     
     String toStringTime(int time) {
         int min = time / 60;
         int sec = time % 60;
-        return "" + (min / 10) + (min % 10) + ":" + (sec / 10) + (sec % 10);
+        return String.format("%02d:%02d", min, sec);
     }
     
     int clip(int time, int max) {
