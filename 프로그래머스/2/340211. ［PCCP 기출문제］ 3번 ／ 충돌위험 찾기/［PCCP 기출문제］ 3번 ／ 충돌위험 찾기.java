@@ -2,13 +2,13 @@ import java.util.*;
 
 class Solution {
     public int solution(int[][] points, int[][] routes) {
-        Map<Integer, Integer> stamp = new HashMap<>();
+        Map<Long, Integer> stamp = new HashMap<>();
         
         for (int[] route : routes) {
             int r = points[route[0] - 1][0];
             int c = points[route[0] - 1][1];
             int t = 0;
-            int key = getKey(r, c, t);
+            long key = getKey(r, c, t);
             stamp.put(key, stamp.getOrDefault(key, 0) + 1);
 
             for (int i = 1; i < route.length; i++) {
@@ -44,8 +44,8 @@ class Solution {
         return answer;
     }
     
-    int getKey(int r, int c, int t) {
-        return (r << 25) + (c << 17) + t;
+    long getKey(long r, long c, long t) {
+        return (r << 40) + (c << 32) + t;
     }
     
 }
