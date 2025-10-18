@@ -162,29 +162,24 @@ class Solution {
                         if (blue_hist[key(blue_nr, blue_nc)])
                             continue;
                         
-                        if (blue_nr == red_nr && blue_nc == red_nc) // 충돌 방지
-                            continue;
+                    }
                         
-                        if (blue_nr == red.r && blue_nc == red.c && red_nr == blue.r && red_nc == blue.c) // 스왑 방지
-                            continue;
+                    if (blue_nr == red_nr && blue_nc == red_nc) // 충돌 방지
+                        continue;
+
+                    if (blue_nr == red.r && blue_nc == red.c && red_nr == blue.r && red_nc == blue.c) // 스왑 방지
+                        continue;
 
                         new_blue_hist = blue_hist.clone();
                         new_blue_hist[key(blue_nr, blue_nc)] = true;
                         next_blue = new Point(blue_nr, blue_nc);
-                    } else {
-                        if (blue_nr == red_nr && blue_nc == red_nc) // 충돌 방지
-                            continue;
-                        
-                        if (blue_nr == red.r && blue_nc == red.c && red_nr == blue.r && red_nc == blue.c) // 스왑 방지
-                            continue;
-
-                    }
                     
                     // 두 수레 중 하나라도 이동을 못하는 경우를 고려해야함. 
                     
                     if((!next_blue.equals(blue) || blue.equals(BLUE_GOAL)) && (!next_red.equals(red) || red.equals(RED_GOAL))) { // 둘 중 하나라도 이동했다면
                         q.offer(new State(next_red, next_blue, new_red_hist, new_blue_hist, dist + 1));
                     }
+                    
                 }
             }
         }
