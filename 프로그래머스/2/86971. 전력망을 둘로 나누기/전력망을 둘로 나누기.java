@@ -28,11 +28,9 @@ class Solution {
         for (int[] wire : wires) {
             int u = wire[0];
             int v = wire[1];
-            G[u].remove(new Integer(v));
-            G[v].remove(new Integer(u));
             
-            int x1 = bfs(u);
-            int x2 = bfs(v);
+            int x1 = bfs(u, v);
+            int x2 = bfs(v, u);
             
             ans = Math.min(ans, Math.abs(x1 - x2));
             
@@ -43,10 +41,11 @@ class Solution {
         return ans;
     }
     
-    int bfs(int start) {
+    int bfs(int start, int visit) {
         Queue<Integer> q = new ArrayDeque<>();
         boolean[] visited = new boolean[N + 1];
         visited[start] = true;
+        visited[visit] = true;
         q.offer(start);
         
         int cnt = 1;
