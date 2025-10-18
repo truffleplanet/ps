@@ -29,14 +29,11 @@ class Solution {
             int u = wire[0];
             int v = wire[1];
             
-            int x1 = bfs(u, v);
-            int x2 = bfs(v, u);
+            int count = bfs(u, v);
             
-            ans = Math.min(ans, Math.abs(x1 - x2));
+            ans = Math.min(ans, Math.abs(count - (N - count)));
             
-            G[u].add(v);
-            G[v].add(u);
-        }
+            }
         
         return ans;
     }
