@@ -26,15 +26,6 @@ class Main {
     static int[] parents;
     static int[] counts;
 
-    static void init(int N) {
-        parents = new int[N + 1];
-        counts = new int[N + 1];
-        
-        for (int i = 1; i <= N; i++) {
-            parents[i] = i;
-            counts[i] = 1;
-        }
-    }
 
     static int find(int x) {
         if (x == parents[x])
@@ -68,7 +59,13 @@ class Main {
         int V = Integer.parseInt(br.readLine());
         int E = Integer.parseInt(br.readLine());
 
-        init(V);
+        parents = new int[V + 1];
+        counts = new int[V + 1];
+        
+        for (int i = 1; i <= V; i++) {
+            parents[i] = i;
+            counts[i] = 1;
+        }
 
         for (int i = 0; i < E; i++) {
             st =  new StringTokenizer(br.readLine());
