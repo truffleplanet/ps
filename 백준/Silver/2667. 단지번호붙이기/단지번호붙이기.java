@@ -1,85 +1,89 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
+import java.lang.*;
+import java.io.*;
 
-public class Main {
+// The main method must be in a class named "Main".
+class Main {
 
-	static class Node {
-		int r;
-		int c;
+    static boolean[][] visited;
+    static int N;
+    static final int[] DR = {-1, 0, 1, 0};
+    static final int[] DC = {0, -1, 0, 1};
 
-		public Node(int r, int c) {
-			super();
-			this.r = r;
-			this.c = c;
-		}
+    static class State {
+        int r, c;
 
-	}
+        public State(int r, int c) {
+            this.r = r;
+            this.c = c;
+        }
+    }
+    
+    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringBuilder sb = new StringBuilder();
+        N = Integer.parseInt(br.readLine());
 
-	public static void main(String[] args) throws NumberFormatException, IOException {
-		final int[] DR = { -1, 0, 1, 0 };
-		final int[] DC = { 0, 1, 0, -1 };
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringBuilder sb = new StringBuilder();
+        visited = new boolean[N][N];
 
-		int N = Integer.parseInt(br.readLine());
-		boolean[][] isValid = new boolean[N][N];
+        for (int i = 0; i < N; i++) {
+            char[] row = br.readLine().toCharArray();
+            for (int j = 0; j < N; j++) {
+                if (row[j] == '0') {
+                    visited[i][j] = true;
+                } else {
+                    visited[i][j] = false;
+                }
+            }
+        }
 
-		for (int i = 0; i < N; i++) {
-			String row = br.readLine();
-			for (int j = 0; j < N; j++) {
-				isValid[i][j] = (row.charAt(j) == '1') ? true : false;
-			}
-		}
+        int total = 0;
+        List<Integer> counts = new ArrayList<>();
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                if (!visited[i][j]) {
+                    total++;
+                    counts.add(bfs(i, j));
+                }
+            }
+        }
 
-		List<Integer> flats = new ArrayList<>();
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < N; j++) {
-				if (isValid[i][j]) {
-					Queue<Node> q = new ArrayDeque<>();
-					isValid[i][j] = false;
-					q.offer(new Node(i, j));
-					int cnt = 1;
 
-					while (!q.isEmpty()) {
-						Node u = q.poll();
-						int r = u.r;
-						int c = u.c;
+        sb.append(total).append('\n');
+        Collections.sort(counts);
+        for (int count : counts) {
+            sb.append(count).append('\n');
+        }
 
-						for (int d = 0; d < 4; d++) {
-							int nr = r + DR[d];
-							int nc = c + DC[d];
+        System.out.println(sb);
+        
+    }
 
-							if (nr < 0 || nr >= N || nc < 0 || nc >= N)
-								continue;
+    static int bfs(int r, int c) {
+        Queue<State> q = new ArrayDeque<>();
+        visited[r][c] = true;
+        q.offer(new State(r, c));
+        
+        int count = 1;
+        while(!q.isEmpty()) {
+            State cur = q.poll();
+            
+            for (int d = 0; d < 4; d++) {
+                int nr = cur.r + DR[d];
+                int nc = cur.c + DC[d];
 
-							if (isValid[nr][nc]) {
-								isValid[nr][nc] = false;
-								cnt++;
-								q.offer(new Node(nr, nc));
-							}
-						}
-					} // bfs 종료
-					flats.add(cnt);
-				}
-			}
-		} // 탐색 종료
+                if (nr < 0 || nr >= N || nc < 0 || nc >=N)
+                    continue;
 
-		// 최악이 N^2 * 2
+                if (visited[nr][nc])
+                    continue;
 
-		Collections.sort(flats);
-		sb.append(flats.size()).append('\n');
-		for (int n : flats) {
-			sb.append(n).append('\n');
-		}
+                visited[nr][nc] = true;
+                count++;
+                q.offer(new State(nr, nc));
+            } 
+        }
 
-		System.out.println(sb);
-
-	}
-
+        return count;
+    }
 }
