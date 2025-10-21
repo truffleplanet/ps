@@ -1,60 +1,73 @@
+import java.util.*;
+import java.lang.*;
+import java.io.*;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayDeque;
-import java.util.Queue;
+// The main method must be in a class named "Main".
+class Main {
 
-public class Main {
-	static final int[] dr = { 1, -1, 0, 0 };
-	static final int[] dc = { 0, 0, 1, -1 };
+    static class State {
+        int r;
+        int c;
+        int dist;
 
-	public static void main(String[] args) throws IOException {
+        public State (int r, int c, int dist) {
+            this.r = r;
+            this.c = c;
+            this.dist = dist;
+        }
+    }
+    
+    public static void main(String[] args) throws Exception {
 
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        final int[] DR = {0, 1, -1 ,0};
+        final int[] DC = {1, 0, 0, -1};
+        
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int N = Integer.parseInt(st.nextToken());
+        int M = Integer.parseInt(st.nextToken());
+        
+        boolean[][] grid = new boolean[N][M];
 
-		String[] tokens = br.readLine().split(" ");
-		int N = Integer.parseInt(tokens[0]);
-		int M = Integer.parseInt(tokens[1]);
+        for (int i = 0; i < N; i++) {
+            char[] line = br.readLine().toCharArray();
+            for (int j = 0; j < M; j++) {
+                grid[i][j] = (line[j] == '1') ? true : false;
+            }
+        }
 
-		boolean[][] map = new boolean[N][M];
-		for (int i = 0; i < N; i++) {
-			String line = br.readLine();
-			for (int j = 0; j < M; j++) {
-				if (line.charAt(j) == '1') {
-					map[i][j] = true;
-				}
-			}
-		}
+        Queue<State> q = new ArrayDeque<>();
+        boolean[][] visited = new boolean[N][M];
+        visited[0][0] = true;
+        q.offer(new State(0, 0, 1));
 
-		Queue<int[]> queue = new ArrayDeque<>();
-		int[][] dist = new int[N][M];
-		dist[0][0] = 1;
-		queue.offer(new int[] { 0, 0 });
+        while(!q.isEmpty()) {
+            State cur = q.poll();
+            
+            int nd = cur.dist + 1;
 
-		while (!queue.isEmpty()) {
-			int[] cur = queue.poll();
-			int r = cur[0];
-			int c = cur[1];
-			if (r == N - 1 && c == M - 1) {
-				break;
-			}
+            for (int d = 0; d < 4; d++) {
+                int nr = cur.r + DR[d];
+                int nc = cur.c + DC[d];
 
-			for (int k = 0; k < 4; k++) {
-				int nr = r + dr[k];
-				int nc = c + dc[k];
-				if (nr < 0 || nr >= N || nc < 0 || nc >= M)
-					continue;
-				if (!map[nr][nc])
-					continue;
-				if (dist[nr][nc] != 0)
-					continue;
-				dist[nr][nc] = dist[r][c] + 1;
-				queue.offer(new int[] { nr, nc });
-			}
-		}
+                if (nr < 0 || nr >= N || nc < 0 || nc >= M)
+                    continue;
 
-		System.out.println(dist[N - 1][M - 1]);
+                if (nr == N - 1 && nc == M - 1) {
+                    System.out.println(nd); // N,M은 2보다 크므로 시작-목적기가 같을 수 없음.
+                    return; // 따라서 이렇게만 정답 출력하면 반드시 정답 출력함.
+                }
 
-	}
+                if (grid[nr][nc] && !visited[nr][nc]) {
+                    visited[nr][nc] = true;
+                    q.offer(new State(nr, nc, nd));
+                }
+
+                
+            }
+        
+        } // 정답이 없으면 출력 없이 종료됨.
+        
+        
+    }
 }
