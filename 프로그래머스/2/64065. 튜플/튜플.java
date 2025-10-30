@@ -20,66 +20,78 @@ import java.lang.*;
 
 class Solution {
     
-    class IntSet implements Comparable<IntSet> {
-        List<Integer> vals;
-        int len;
+    public int[] solution (String s) {
         
-        public IntSet(List<Integer> lst) {
-            this.vals = lst;
-            this.len = lst.size();
-        }
+        String[] stringSet = s.replaceAll("[{}]", " ").trim().split(" , ");
         
-        @Override
-        public int compareTo(IntSet o) {
-            return this.len - o.len;
-        }
-    }
-    
-    public int[] solution (String s) throws Exception {
+        List<Integer>[] intSets = new List[stringSet.length];
         
-        s = s.substring(1, s.length() - 1);
-        
-        List<String> sets = new ArrayList<>();
-        char[] ca = s.toCharArray();
-        
-        int l = 1;
-        for (int i = 1; i < ca.length; i++) {
-            if (ca[i] == '}') {
-                sets.add(s.substring(l, i));
-                l = i + 3;
+        for (int i = 0; i < stringSet.length; i++) {
+            intSets[i] = new ArrayList<>();
+            String[] tokens = stringSet[i].split(",");
+            for (String token : tokens) {
+                intSets[i].add(Integer.parseInt(token));
             }
         }
         
-        List<IntSet> intsets = new ArrayList<>();
-        for (String set : sets) {
-            String[] tk = set.split(",");
-            List<Integer> vals = new ArrayList<>();
-            for (String token : tk) {
-                vals.add(Integer.parseInt(token));
-            }
-            IntSet x = new IntSet(vals);
-            intsets.add(x);
-        }
+        Arrays.sort(intSets, Comparator.comparingInt(x -> x.size()));
         
-        Collections.sort(intsets);
-        
-        List<Integer> ans = new ArrayList<>();
-        boolean[] visited = new boolean[100001];
-        for (IntSet p : intsets) {
-            for (int v : p.vals) {
-                if (!visited[v]) {
-                    visited[v] = true;
-                    ans.add(v);
-                    break;
-                }
+        HashSet<Integer> ans = new LinkedHashSet<>();
+        for (List<Integer> set : intSets) {
+            for (int v : set) {
+                ans.add(v);
             }
         }
         
-        
-        int[] answer = new int[ans.size()];
-        for (int i = 0; i < ans.size(); i++) {
-            answer[i] = ans.get(i);
+        int[] out = new int[ans.size()];
+        int i = 0;
+        for (int v : ans) {
+            out[i] = v;
+            i++;
         }
-        return answer;
+                
+        return out;
+//         List<String> sets = new ArrayList<>();
+//         char[] ca = s.toCharArray();
+        
+//         int l = 1;
+//         for (int i = 1; i < ca.length; i++) {
+//             if (ca[i] == '}') {
+//                 sets.add(s.substring(l, i));
+//                 l = i + 3;
+//             }
+//         }
+        
+//         List<IntSet> intsets = new ArrayList<>();
+//         for (String set : sets) {
+//             String[] tk = set.split(",");
+//             List<Integer> vals = new ArrayList<>();
+//             for (String token : tk) {
+//                 vals.add(Integer.parseInt(token));
+//             }
+//             IntSet x = new IntSet(vals);
+//             intsets.add(x);
+//         }
+        
+//         Collections.sort(intsets);
+        
+//         List<Integer> ans = new ArrayList<>();
+//         boolean[] visited = new boolean[100001];
+//         for (IntSet p : intsets) {
+//             for (int v : p.vals) {
+//                 if (!visited[v]) {
+//                     visited[v] = true;
+//                     ans.add(v);
+//                     break;
+//                 }
+//             }
+//         }
+        
+        
+//         int[] answer = new int[ans.size()];
+//         for (int i = 0; i < ans.size(); i++) {
+//             answer[i] = ans.get(i);
+//         }
+//         return answer;
     }
 }
