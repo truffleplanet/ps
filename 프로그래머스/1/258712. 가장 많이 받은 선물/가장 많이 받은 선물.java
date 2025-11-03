@@ -1,51 +1,59 @@
+/*
+조건 1. 두 사람이 선물을 주고 받은 기록이 있다면 더 많이줬던 사람이 더 덜준 사람한테 받음
+조건 2. 두 사람이 선물을 주고 받은 기록이 없거나 같다면, 선물 지수가 큰 사람이 더 작은 사람한테 하나 받음
+
+
+
+*/
+
 import java.util.*;
 
 class Solution {
     public int solution(String[] friends, String[] gifts) {
+        HashMap<String, Integer> idToidx = new HashMap<>();
+        
         int N = friends.length;
-        int M = gifts.length;
-        StringTokenizer st;
-        
-        Map<String, Integer> toInt = new HashMap<>();
-        int[][] adjMatrix = new int[N][N];
-        int[] pDegree = new int[N];
-        int[] nMonth = new int[N];
-         
         for (int i = 0; i < N; i++) {
-            toInt.put(friends[i], i);
-        } 
-        
-        for (int i =0; i < M; i++) {
-            st = new StringTokenizer(gifts[i]);
-            int from = toInt.get(st.nextToken());
-            int to = toInt.get(st.nextToken());
-            adjMatrix[from][to]++;
-            pDegree[from]++;
-            pDegree[to]--;
+            idToidx.put(friends[i], i);
         }
         
-        for (int i =0; i < N-1; i++) {
-            for (int j = i +1; j < N; j++) {
-                int itoj = adjMatrix[i][j];
-                int jtoi = adjMatrix[j][i];
-                if (itoj > jtoi) {
-                    nMonth[i]++;
-                } else if (itoj < jtoi) {
-                    nMonth[j]++;
+        int[][] giftTable = new int[N][N];
+        int[] giftPoint = new int[N];
+        
+        for (String gift : gifts) {
+            StringTokenizer st = new StringTokenizer(gift);
+            int from = idToidx.get(st.nextToken());
+            int to = idToidx.get(st.nextToken());
+            giftTable[from][to]++;
+            giftPoint[from]++;
+            giftPoint[to]--;
+        }
+        
+        int[] cnt = new int[N];
+        for (int i = 0; i < N; i++) {
+            for (int j = i + 1; j < N; j++) {
+                if (i == j)
+                    continue;
+                
+                if (giftTable[i][j] > giftTable[j][i]) {
+                    cnt[i]++;
+                } else if (giftTable[i][j] < giftTable[j][i]) {
+                    cnt[j]++;
                 } else {
-                    if (pDegree[i] > pDegree[j]) {
-                        nMonth[i]++;
-                    } else if (pDegree[i] < pDegree[j]) {
-                        nMonth[j]++;
-                    } 
+                    if (giftPoint[i] > giftPoint[j]) {
+                        cnt[i]++;
+                    } else if (giftPoint[i] < giftPoint[j]) {
+                        cnt[j]++;
+                    }
                 }
             }
         }
-        int answer = 0;
-        for (int i =0; i < N; i++) {
-            answer = Math.max(answer, nMonth[i]);
-        }
         
-        return answer;
-    }
+        int ans = 0;
+        for (int i = 0; i < N; i++) {
+            ans = Math.max(ans, cnt[i]);
+        }
+    
+        return ans;
+    }   
 }
