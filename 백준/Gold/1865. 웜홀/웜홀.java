@@ -79,6 +79,7 @@ class Main {
             for (int i = 0; i < N - 1; i++) {
                 for (Edge e : edgeList) {
                     int nd = dist[e.from] + e.w;
+                    // 그래프가 연결 안되어 있을 때도 음 가중치 영역은 업데이트 된다.
                     if (nd < dist[e.to]) {
                         dist[e.to] = nd;
                     }
