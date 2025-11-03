@@ -74,7 +74,12 @@ class Main {
             if (v == parent)
                 continue;            
 
-            int childDist = dfs(u, v) + w;
+            int childDist = w;
+            if (dp[v] != 0) {
+                childDist += dp[v];
+            } else {
+                childDist += dfs(u, v);
+            }
             
             if (childDist > max1) {
                 max2 = max1;
