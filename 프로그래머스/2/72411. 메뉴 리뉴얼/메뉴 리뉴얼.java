@@ -26,12 +26,13 @@ class Solution {
         int best[] = new int[11];
         
         for (String order : orders) {
+            char[] t = order.toCharArray();
+            Arrays.sort(t);
+            String sortedOrder = String.valueOf(t);
+
             for (int r : course) {
                 if (order.length() >= r) {
-                    // 문자열을 정렬해서 넘겨줘야함!
-                    char[] a = order.toCharArray();
-                    Arrays.sort(a);
-                    comb(String.valueOf(a), r, 0, "");
+                    comb(sortedOrder, r, 0, new StringBuilder());
                 }
             }
         }
@@ -42,28 +43,31 @@ class Solution {
             best[key.length()] = Math.max(best[key.length()], cnt);
         }
         
-        List<String> out = new ArrayList<>();
+        return count.entrySet().stream()
+            .filter(entry -> entry.getValue() > 1 && entry.getValue() == best[entry.getKey().length()])
+            .map(Map.Entry::getKey)
+            .sorted()
+            .toArray(String[]::new);
 
-        for (Map.Entry<String, Integer> entry : count.entrySet()) {
-            String key = entry.getKey();
-            int cnt = entry.getValue();
-            if (cnt == best[key.length()] && cnt > 1) {
-                out.add(key);
-            }
-        }
+//         for (Map.Entry<String, Integer> entry : count.entrySet()) {
+//             String key = entry.getKey();
+//             int cnt = entry.getValue();
+//             if (cnt == best[key.length()] && cnt > 1) {
+//                 out.add(key);
+//             }
+//         }
         
-        Collections.sort(out);
-        String[] answer = new String[out.size()];
-        for (int i = 0; i < out.size(); i++) {
-            answer[i] = out.get(i);
-        }
-        return answer;
+//         Collections.sort(out);
+//         String[] answer = new String[out.size()];
+//         for (int i = 0; i < out.size(); i++) {
+//             answer[i] = out.get(i);
+//         }
+//         return answer;
     }
     
-    public void comb(String order, int r, int start, String seq) {
-        if (seq.length() == r) {
-            // System.out.println("order: " + order);
-            // System.out.println("seq: " + seq + "\n");
+    public void comb(String order, int r, int start, StringBuilder sb) {
+        if (sb.length() == r) {
+            String seq = sb.toString();
             count.put(seq, count.getOrDefault(seq, 0) + 1);
             return;
         }
@@ -71,7 +75,9 @@ class Solution {
         int n = order.length();
         
         for (int i = start; i < n; i++) {
-            comb(order, r, i + 1, seq + order.charAt(i));
+            sb.append(order.charAt(i));
+            comb(order, r, i + 1, sb);
+            sb.deleteCharAt(sb.length() - 1);
         }        
     }
 }
