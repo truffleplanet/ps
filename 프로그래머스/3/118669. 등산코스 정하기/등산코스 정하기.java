@@ -1,129 +1,121 @@
 /*
-등산 경로가 있고
-휴식없이 이동하는 가장 긴 시간 -> intensity
-휴식 -> 쉼터, 산봉우리 방문
-산봉우리 - 한번만 방문
-출입구 - 처음과 끝 한번만 방문(원래의 출입구로 돌아와야함)
-intensity가 최소인 등산 코스 찾기.
+조건:
+출입구, 쉼터, 산봉우리가 있음.
+출입구에서 산봉우리까지 최소 intensity(어차피 왕복이고, 똑같음)
+
+출력:
+산봉우리 번호와 intensity 최솟값.
+최소 intensity 등산 코스가 여러개라면 그 중 산봉우리 번호가 가장 낮은 등산코스
+
 
 풀이:
-1. 가는 길과 오는 길의 intensity는 다르지 않으므로, 출입구에서 산봉우리까지 최소 intensity 찾기임.
-2. 모든 출입구에서, 산봉우리들에 대한 최소 intensity 찾기.
-3. 현재 intensity보다 작아질 수 있음? (없음)
-4. 따라서 intensity를 우선순위 큐의 key로 두고 다익스트라하다가 산봉우리 만나면 끝내면 됨.
-5. 라고 생각했는데, 해당 intensity 노드까지는 전부 확인해야함. 왜냐하면, intensity가 엄격하게 증가하지 않음.
+갈 수 있는 곳은 산봉우리 아니면 쉼터뿐인데,
+intensity는 경로내의 최댓값 하나만 따지면 된다.
+
+
+1. 출입구부터 멀티소스 다익스트라.
+2. 다만 가중치 업데이트가 이동시 intensity와 기존 intensity의 최댓값으로 업데이트 됨.
+3. 가장 봉우리 번호가 낮은 등산코스를 알아야하므로,
+    산봉우리에 도착하면 최소 intensity업데이트하고
+    그것과 같은 intensity가진 모든 노드들은 poll해봐야한다.
+
 */
 
 import java.util.*;
 
 class Solution {
     
-    static class Edge {
+    public class Edge {
         int to;
-        int w;
+        int intensity;
         
-        public Edge(int to, int w) {
+        public Edge(int to, int intensity) {
             this.to = to;
-            this.w = w;
+            this.intensity = intensity;
         }
-         
     }
     
-    static class HeapNode implements Comparable<HeapNode> {
+    public class State implements Comparable<State>{
         int from;
         int intensity;
         
-        public HeapNode(int from, int intensity) {
+        public State(int from, int intensity) {
             this.from = from;
             this.intensity = intensity;
         }
         
         @Override
-        public int compareTo(HeapNode o) {
-            int v1 = Integer.compare(this.intensity, o.intensity);
-            return v1;
-            
+        public int compareTo(State o) {
+            return Integer.compare(this.intensity, o.intensity);
         }
-        
     }
     
+    final static int GATE = 1;
+    final static int SUMMIT = 2;
+    
     public int[] solution(int n, int[][] paths, int[] gates, int[] summits) {
-        final int REST = 0;
-        final int GATE = 1;
-        final int SUMMIT = 2;
+        int[] nodeType = new int[n + 1];
+        for (int x : gates) {
+            nodeType[x] = GATE;
+        }
+        for (int x : summits) {
+            nodeType[x] = SUMMIT;
+        }
         
-        List<List<Edge>> G = new ArrayList<>();
-        int[] type = new int[n + 1];
-        int[] dist = new int[n + 1];
-        PriorityQueue<HeapNode> pq = new PriorityQueue<>();
-
-        for (int i = 0; i <= n; i++) {
-            G.add(new ArrayList<>());
-        } // 그래프 초기화 
+        List<Edge>[] G = new List[n + 1];
+        for (int i = 1; i <= n; i++) {
+            G[i] = new ArrayList<>();
+        }
         
         for (int[] path : paths) {
-            int u = path[0];
-            int v = path[1];
+            int from = path[0];
+            int to = path[1];
             int w = path[2];
-            G.get(u).add(new Edge(v, w));
-            G.get(v).add(new Edge(u, w));
-        } // 인접 리스트 생성 
-                
-        Arrays.fill(dist, Integer.MAX_VALUE); // 거리 배열 초기화 
-
-        for (int v : summits) { 
-            type[v] = SUMMIT;
-        } // 타입 배열 초기화 
+            G[from].add(new Edge(to, w));
+            G[to].add(new Edge(from, w));
+        } // 이동 조건 검사는 모두 다익스트라에서 하기로 함. 
         
-        for (int v : gates) {
-            type[v] = GATE;
-            dist[v] = 0;
-            pq.offer(new HeapNode(v, 0));
-        } // 타입 배열 초기화 및 멀티소스 다익스트라 시작
+        int[] answer = new int[2];
+        answer[1] = -1;
         
+        int[] dist = new int[n + 1];
+        Arrays.fill(dist, Integer.MAX_VALUE);
+        PriorityQueue<State> pq = new PriorityQueue<>();
+        for (int x : gates) {
+            dist[x] = 0;
+            pq.offer(new State(x, 0));
+        }
         
-        int[] ans = {-1, Integer.MAX_VALUE}; // sentinel value
         while (!pq.isEmpty()) {
-            HeapNode node = pq.poll();
-            int u = node.from;
-            int d = node.intensity;
+            State cur = pq.poll();
             
-            if (dist[u] < d) { // stale
+            if (cur.intensity > dist[cur.from]) {
                 continue;
             }
             
-            if (type[u] == SUMMIT) { // 봉우리면, 해당 노드의 마지막점.
-                if (ans[0] == -1) { // 첫 정상일 때.
-                    ans[0] = u;
-                    ans[1] = d;
-                    continue; 
-                } else {
-                    if (d > ans[1]) { // 만약, intensity 최솟값보다 큰 노드면 종료
-                        break;
-                    } 
-                    
-                    if (ans[0] > u) { // 봉우리 넘버가 작은 것을 정답으로하기 
-                        ans[0] = u;
-                    }
+            if (nodeType[cur.from] == SUMMIT) {
+                if (answer[1] == -1) {
+                    answer[1] = cur.intensity;
+                    answer[0] = cur.from;
+                } else if (cur.intensity > answer[1]) {
+                    break;
+                } else if (answer[0] > cur.from) {
+                    answer[0] = cur.from;
                 }
                 continue;
-            } // 봉우리면 그 노드에서 더 탐색하면 안되니 continue
+            }
             
-            for (Edge e : G.get(u)) {
-                int nd = (d > e.w) ? d : e.w;
-                int v = e.to;
-                
-                if (type[v] == GATE)
+            for (Edge e : G[cur.from]) {
+                if (nodeType[e.to] == GATE)
                     continue;
-                
-                if (dist[v] > nd && nd <= ans[1]) {
-                    dist[v] = nd;
-                    pq.offer(new HeapNode(v, nd));
+                int nd = Math.max(cur.intensity, e.intensity);
+                if (dist[e.to] > nd) {
+                    dist[e.to] = nd;
+                    pq.offer(new State(e.to, nd));
                 }
             }
         }
         
-        return ans;
-        
+        return answer;
     }
 }
