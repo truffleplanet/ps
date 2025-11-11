@@ -67,7 +67,7 @@ class Solution {
         Deque<Deque<Integer>> matrix = new ArrayDeque<>();
         for (int i = 0; i < H; i++) {
             Deque<Integer> row = new ArrayDeque<>();
-            for (int j = 0; j < W; j++) {
+            for (int j = 1; j < W - 1; j++) {
                 row.offerLast(rc[i][j]);
             }
             matrix.offerLast(row);
@@ -89,8 +89,6 @@ class Solution {
         
         for (int i = 0; i < H; i++) {
             Deque<Integer> row = matrix.removeFirst();
-            row.removeFirst();
-            row.removeLast();
             for (int j = 1; j < W - 1; j++) {
                 answer[i][j] = row.removeFirst();
             }
@@ -103,32 +101,16 @@ class Solution {
         matrix.offerFirst(matrix.removeLast());
         l.offerFirst(l.removeLast());
         r.offerFirst(r.removeLast());
-        Deque<Integer> last = matrix.getLast();
-        last.removeFirst();
-        last.removeLast();
-        last.offerFirst(l.getLast());
-        last.offerLast(r.getLast());
     }
     
     public void rotate(Deque<Deque<Integer>> matrix, Deque<Integer> leftCol, Deque<Integer> rightCol) {
         Deque<Integer> firstRow = matrix.getFirst();
         Deque<Integer> lastRow = matrix.getLast();
         
-        // 첫 행에서 맨 끝 요소를 삭제(이건 필요 없음)
-        firstRow.removeLast();
-        rightCol.offerFirst(firstRow.getLast());
-        
-        // 마지막 열에서 끝 요소를 빼둔다.
-        rightCol.removeLast();
-        // 
-        lastRow.offerLast(rightCol.getLast());
-        // 마지막 행에서 첫 요소를 빼둔다
-        lastRow.removeFirst();
-        
-        leftCol.offerLast(lastRow.getFirst());
-        leftCol.removeFirst();
-        
-        firstRow.offerFirst(leftCol.getFirst());
+        firstRow.offerFirst(leftCol.removeFirst());
+        rightCol.offerFirst(firstRow.removeLast());
+        lastRow.offerLast(rightCol.removeLast());
+        leftCol.offerLast(lastRow.removeFirst());
     }
     
 }
