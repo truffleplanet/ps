@@ -41,6 +41,8 @@ class Main {
         for (int i = 0; i < N; i++) {
             for (int j = c[i]; j <= maxCost; j++) {
                 dp[j] = Math.max(dp[j], dp[j - c[i]] + v[i]);
+                if (dp[j] >= C)
+                    break;
             }
         }
 
