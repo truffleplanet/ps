@@ -151,7 +151,7 @@ class Main {
         while (l < r) {
             int mid = (l + r) / 2;
 
-            if (key < list.get(mid)) {
+            if (key <= list.get(mid)) {
                 r = mid;
             } else {
                 l = mid + 1;
