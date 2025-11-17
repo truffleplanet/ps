@@ -1,29 +1,41 @@
+/*
+공부하고 구현할 때마다 헷갈리는 LCS
+이번에는 잘 해낼 수 있을까?
+
+
+A의 [i], B[j]에서 끝날 때, LCS의 최대 길이
+
+if (A[i] == B[i])
+    dp[i][j] = dp[i -1][j - 1] + 1;
+else
+    dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
+*/
+
 import java.util.*;
+import java.lang.*;
 import java.io.*;
 
-public class Main {
+// The main method must be in a class named "Main".
+class Main {
     public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringBuilder sb = new StringBuilder();
+        char[] A = br.readLine().toCharArray();
+        char[] B = br.readLine().toCharArray();
 
-            char[] seq1 = br.readLine().toCharArray();
-            char[] seq2 = br.readLine().toCharArray();
+        int N = A.length;
+        int M = B.length;
+        int[][] dp = new int[N + 1][M + 1];
 
-            int n = seq1.length;
-            int m = seq2.length;
-
-            int dp[][] = new int[n + 1][m + 1];
-
-            for (int i = 0; i < n; i++) {
-                for (int j = 0; j < m; j++) {
-                    if (seq1[i] == seq2[j]) {
-                        dp[i + 1][j + 1] = dp[i][j] + 1;
-                    } else {
-                        dp[i + 1][j + 1] = Math.max(dp[i][j + 1], dp[i + 1][j]);
-                    }
+        for (int i = 1; i <= N; i++) {
+            for (int j = 1; j <= M; j++) {
+                if (A[i - 1] == B[j - 1]) {
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                } else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
                 }
             }
+        }
 
-        System.out.println(dp[n][m]);
+        System.out.println(dp[N][M]);
     }
 }
