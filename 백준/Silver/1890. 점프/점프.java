@@ -33,6 +33,8 @@ class Main {
             for (int j = 0; j < N; j++) {
                 board[i][j] = Integer.parseInt(st.nextToken());
             }
+
+            Arrays.fill(dp[i], -1);
         }
 
         System.out.println(dfs(0, 0));
@@ -40,6 +42,9 @@ class Main {
     }
 
     public static long dfs(int r, int c) {
+        if (dp[r][c] != -1) {
+            return dp[r][c];
+        }
 
         if (r == N - 1 && c == N - 1) {
             return 1;
@@ -50,23 +55,16 @@ class Main {
             return 0;
         }
 
-        int nr = r + d;
-        int nc = c + d;
         long cnt = 0;
+        
+        int nr = r + d;
         if (nr < N) {
-            if (dp[nr][c] != 0) {
-                cnt += dp[nr][c];
-            } else {
-                cnt += dfs(nr, c);
-            }
+            cnt += dfs(nr, c);
         } 
 
+        int nc = c + d;
         if (nc < N) {
-            if (dp[r][nc] != 0) {
-                cnt += dp[r][nc];
-            } else {
-                cnt += dfs(r, nc);
-            }
+            cnt += dfs(r, nc);
         }
         
         dp[r][c] = cnt;
