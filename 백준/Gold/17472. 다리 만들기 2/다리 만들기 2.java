@@ -26,17 +26,16 @@ import java.util.*;
 
 // The main method must be in a class named "Main".
 public class Main {
-    static class Edge implements Comparable<Edge> {
+    static class HeapNode implements Comparable<HeapNode> {
         int to;
         int c;
 
-        public Edge(int to, int c) {
+        public HeapNode(int to, int c) {
             this.to = to;
             this.c = c;
         }
-
         @Override
-        public int compareTo(Edge o) {
+        public int compareTo(HeapNode o) {
             return this.c - o.c;
         }
     }
@@ -59,7 +58,7 @@ public class Main {
     static int H, W;
     static int mapNum;
     static int[][] grid;
-    static List<Edge>[] G;
+    static int[][] adjMatrix;
 
     public static void main(String[] args) throws Exception{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -88,9 +87,9 @@ public class Main {
         }
 
         int V = mapNum - 2; // mapNum은 2에서 시작함.
-        G = new List[mapNum]; // 빈칸 두고 사용하기
-        for (int i = 2; i < mapNum; i++) {
-            G[i] = new ArrayList<>();
+        adjMatrix = new int[mapNum][mapNum]; // 빈칸 두고 사용하기
+        for (int i = 0; i < mapNum; i++) {
+            Arrays.fill(adjMatrix[i], Integer.MAX_VALUE);
         }
 
         // 열 방향 읽기
@@ -107,8 +106,9 @@ public class Main {
                         start = grid[i][j];
                         cost = 0;
                     } else {
-                        G[start].add(new Edge(grid[i][j], cost));
-                        G[grid[i][j]].add(new Edge(start, cost));
+                        int end = grid[i][j];
+                        adjMatrix[start][end] = Math.min(adjMatrix[start][end], cost);
+                        adjMatrix[end][start] = Math.min(adjMatrix[start][end], cost);
                         start = grid[i][j];
                         cost = 0;
                     }
@@ -134,8 +134,9 @@ public class Main {
                         start = grid[i][j];
                         cost = 0;
                     } else {
-                        G[start].add(new Edge(grid[i][j], cost));
-                        G[grid[i][j]].add(new Edge(start, cost));
+                        int end = grid[i][j];
+                        adjMatrix[start][end] = Math.min(adjMatrix[start][end], cost);
+                        adjMatrix[end][start] = Math.min(adjMatrix[start][end], cost);
                         start = grid[i][j];
                         cost = 0;
                     }
@@ -148,26 +149,30 @@ public class Main {
             }
         }
 
-        PriorityQueue<Edge> pq = new PriorityQueue<>();
+        PriorityQueue<HeapNode> pq = new PriorityQueue<>();
         int totalCost = 0;
         int connectCnt = 0;
         boolean[] connected = new boolean[mapNum];
-        for (Edge e : G[2]) {
-            pq.offer(e);
+        for (int i = 2; i < mapNum; i++) {
+            int cost = adjMatrix[2][i];
+            if (cost != Integer.MAX_VALUE) {
+                pq.offer(new HeapNode(i, cost));
+            }
         }
         connectCnt++;
         connected[2] = true;
 
         while (!pq.isEmpty() && connectCnt < V) {
-            Edge e = pq.poll();
+            HeapNode node = pq.poll();
 
-            if (!connected[e.to]) {
-                connected[e.to] = true;
+            if (!connected[node.to]) {
+                connected[node.to] = true;
                 connectCnt++;
-                totalCost += e.c;
-                for (Edge o : G[e.to]) {
-                    if (!connected[o.to]) {
-                        pq.offer(o);
+                totalCost += node.c;
+                for (int i = 2; i < mapNum; i++) {
+                    int cost = adjMatrix[node.to][i];
+                    if (!connected[i] && cost != Integer.MAX_VALUE) {
+                        pq.offer(new HeapNode(i, cost));
                     }
                 }
             }
