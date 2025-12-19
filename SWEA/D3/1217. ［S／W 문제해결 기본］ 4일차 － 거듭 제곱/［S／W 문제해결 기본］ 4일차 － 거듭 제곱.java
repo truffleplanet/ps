@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class Solution {
+class Solution {
 
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
@@ -10,22 +10,22 @@ public class Solution {
             int tc = sc.nextInt();
             int base = sc.nextInt();
             int e = sc.nextInt();
-            System.out.println("#"+tc+" "+pow(base, e));
+            System.out.println("#"+tc+" "+fastExp(base, e));
         }
     }
 
-    public static int pow(int base, int e) {
-        if (e == 0) {
-            return 1;
-        }
-
-        int half = pow(base, e / 2);
-
-        if (e % 2 == 1) {
-            return half * half * base;
-        } else {
-            return half * half;
-        }
-
+    public static int fastExp(int base, int e) {
+        int x = base;
+        int y = e;
+        int z = 1;
+        
+        while (y > 0) {
+            if (y % 2 == 1) {
+                z *= x;
+            }
+            y /= 2;
+            x = x * x;
+    	}
+        return z;
     }
 }
