@@ -2,25 +2,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayDeque;
+import java.util.Iterator;
 import java.util.StringTokenizer;
-
-/*
- * 최대 경우의 수 -> 4^5 = 1024
- * 
- * 조건
- * - 이동하려고 하는 쪽의 칸이 먼저 합쳐진다
- * - 한 번의 이동에서 이미 합쳐진 블록은 또 합쳐질 수 없다
- * 
- * - 일단 밀고, 그 다음에 처리하면 됨. 스택에 쌓아 뒀다가.
- * 
- * 
- * [풀이]
- * 1. 4방향으로 밀어서 상태 변화 시키는 로직
- * 	 - 이전 상태에서 복제? 아니면 더 우아한 방법 있는지.?
- * 	
- * 2. 완전탐색 로직(백트래킹)
- * 
- */
 
 public class Main {
 
@@ -60,7 +43,7 @@ public class Main {
 		ans = 0;
 		recur(0, startState);
 		System.out.println(ans);
-		
+				
 	}
 	
 	static void recur(int cnt, ArrayDeque<Integer>[] state) {
@@ -79,25 +62,23 @@ public class Main {
 		}
 	}
 
-	static ArrayDeque<Integer>[] move(ArrayDeque<Integer>[] origState, int dir) {
-		
-		ArrayDeque<Integer>[] state = new ArrayDeque[2 * N];
-		ArrayDeque<Integer>[] output = new ArrayDeque[2 * N];
+	static ArrayDeque<Integer>[] move(ArrayDeque<Integer>[] state, int dir) {
+				ArrayDeque<Integer>[] output = new ArrayDeque[2 * N];
 		for (int i = 0; i < 2 * N; i++) {
-			state[i] = origState[i].clone();
 			output[i] = new ArrayDeque<>();
 		}
 		
 		switch (dir) {
 		case LEFT:
 			for (int i = 0; i < N; i++) {
-				if (state[i].isEmpty()) {
+				Iterator<Integer> iterator = state[i].iterator();
+				if (!iterator.hasNext()) {
 					continue;
 				}
-				int prev = state[i].pollFirst();
+				int prev = iterator.next();
 
-				while (!state[i].isEmpty()) {
-					int curr = state[i].pollFirst();
+				while (iterator.hasNext()) {
+					int curr = iterator.next();
 
 					if (prev == -1) {
 						prev = curr;
@@ -123,13 +104,14 @@ public class Main {
 			break;
 		case RIGHT:
 			for (int i = 0; i < N; i++) {
-				if (state[i].isEmpty()) {
+				Iterator<Integer> iterator = state[i].descendingIterator();
+				if (!iterator.hasNext()) {
 					continue;
 				}
-				int prev = state[i].pollLast();
+				int prev = iterator.next();
 
-				while (!state[i].isEmpty()) {
-					int curr = state[i].pollLast();
+				while (iterator.hasNext()) {
+					int curr = iterator.next();
 
 					if (prev == -1) {
 						prev = curr;
@@ -155,13 +137,14 @@ public class Main {
 			break;
 		case UP:
 			for (int i = N; i < 2 * N; i++) {
-				if (state[i].isEmpty()) {
+				Iterator<Integer> iterator = state[i].iterator();
+				if (!iterator.hasNext()) {
 					continue;
 				}
-				int prev = state[i].pollFirst();
+				int prev = iterator.next();
 
-				while (!state[i].isEmpty()) {
-					int curr = state[i].pollFirst();
+				while (iterator.hasNext()) {
+					int curr = iterator.next();
 
 					if (prev == -1) {
 						prev = curr;
@@ -187,13 +170,14 @@ public class Main {
 			break;
 		case DOWN:
 			for (int i = N; i < 2 * N; i++) {
-				if (state[i].isEmpty()) {
+				Iterator<Integer> iterator = state[i].descendingIterator();
+				if (!iterator.hasNext()) {
 					continue;
 				}
-				int prev = state[i].pollLast();
+				int prev = iterator.next();
 
-				while (!state[i].isEmpty()) {
-					int curr = state[i].pollLast();
+				while (iterator.hasNext()) {
+					int curr = iterator.next();
 
 					if (prev == -1) {
 						prev = curr;
