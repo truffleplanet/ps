@@ -9,7 +9,6 @@ class Main {
         int N = Integer.parseInt(br.readLine());
 
         char[] pattern = toCharArray(br.readLine(), N);
-        char[] s = toCharArray(br.readLine(), N);
 
         int len = N - findPi(pattern)[N - 1];       
         int cnt = 1;
