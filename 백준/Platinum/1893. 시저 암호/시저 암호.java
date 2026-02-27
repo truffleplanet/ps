@@ -11,11 +11,11 @@ import java.io.*;
 class Main {
     public static void main(String[] args) throws Exception {
         final String NO_SOLUTION = "no solution";
-        final String UNIQUE = "unique";
-        final String AMBIGUOUS = "ambiguous";
+        final String UNIQUE = "unique: ";
+        final String AMBIGUOUS = "ambiguous: ";
         
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringBuilder sb = new StringBuilder();
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         
         final int T = Integer.parseInt(br.readLine());
         for (int tc = 0; tc < T; tc++) {
@@ -29,31 +29,34 @@ class Main {
             }
             toNextChar.put(A[A.length - 1], A[0]);
 
-            List<Integer> ans = new ArrayList<>();
+            int cnt = 0;
+            StringBuilder sb = new StringBuilder();
             int[] pi = getPi(W);
             for (int x = 0; x < A.length; x++) {
                 if (matchOnce(S, W, pi)) {
-                    ans.add(x);
+                    cnt++;
+                    sb.append(x).append(' ');
                 }
                 for (int idx = 0; idx < W.length; idx++) {
                     W[idx] = toNextChar.get(W[idx]);
                 }
             }
 
-            if (ans.size() > 1) {
-                sb.append(AMBIGUOUS).append(':').append(' ');
-                for (int x : ans) {
-                    sb.append(x).append(' ');
-                }
-            } else if (ans.size() == 1) {
-                sb.append(UNIQUE).append(':').append(' ');
-                sb.append(ans.get(0));
+            if (cnt > 1) {
+                bw.write(AMBIGUOUS);
+                bw.write(sb.toString());
+                bw.write("\n");
+            } else if (cnt == 1) {
+                bw.write(UNIQUE);
+                bw.write(sb.toString());
+                bw.write("\n");
             } else {
-                sb.append(NO_SOLUTION);
+                bw.write(NO_SOLUTION);
+                bw.write("\n");
             }
-            sb.append('\n');
         }
-        System.out.println(sb);
+        bw.flush();
+        bw.close();
     }
 
     public static boolean matchOnce(char[] s, char[] w, int[] pi) {
