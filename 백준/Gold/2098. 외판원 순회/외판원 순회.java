@@ -3,14 +3,19 @@ import java.lang.*;
 import java.io.*;
 
 class Main {
+
+    static final int INF = 20_000_000;
+    static int N;
+    static int[][] W;
+    static int[][] dp;
+
+    static int FULL_MASK;
+    
     public static void main(String[] args) throws Exception {
-        final int INF = 20_000_000;
-        
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        // init
-        int N = Integer.parseInt(br.readLine());
-        int[][] W = new int[N][N];
+        N = Integer.parseInt(br.readLine());
+        W = new int[N][N];
         for (int i = 0; i < N; i++) {
             StringTokenizer st = new StringTokenizer(br.readLine());
             for (int j = 0; j < N; j++) {
@@ -18,42 +23,39 @@ class Main {
             }
         }
 
-        int MASK = (1 << N) - 1;
-        // solution 
-        int[][] dp = new int[MASK + 1][N];
-        for (int i = 0; i <= MASK; i++) {
-            Arrays.fill(dp[i], INF);
+        dp = new int[N][1 << N];
+        for (int i = 0; i < N; i++) {
+            Arrays.fill(dp[i], -1);
         }
-        dp[1 << 0][0] = 0;
-        for (int mask = 1; mask <= MASK; mask++) {
-            for (int start = 0; start < N; start++) {
-                if ((mask & (1 << start)) == 0) {
-                    continue;
-                }
-                if (dp[mask][start] == INF) {
-                    continue;
-                }
-                for (int end = 0; end < N; end++) {
-                    if (W[start][end] == 0) {
-                        continue;
-                    }
-                    if ((mask & (1 << end)) != 0) {
-                        continue;
-                    }
-                    int nMask = mask | (1 << end);
-                    dp[nMask][end] = Math.min(dp[nMask][end], 
-                                             dp[mask][start] + W[start][end]);
-                }
+        FULL_MASK = (1 << N) - 1;
+
+        int ans = dfs(0, 1);
+        System.out.println(ans);
+        
+
+    }
+
+    static int dfs(int cur, int mask) {
+        if (mask == FULL_MASK) {
+            if (W[cur][0] != 0) {
+                return W[cur][0];
             }
+            return INF;
         }
 
-        int ans = INF;
-        for (int i = 1; i < N; i++) {
-            if (dp[MASK][i] == INF || W[i][0] == 0) {
+        if (dp[cur][mask] != -1) {
+            return dp[cur][mask];
+        }
+
+        dp[cur][mask] = INF;
+        for (int i = 0; i < N; i++) {
+            if (W[cur][i] == 0 || (mask & (1 << i)) != 0) {
                 continue;
             }
-            ans = Math.min(ans, dp[MASK][i] + W[i][0]);
+
+            int nCost = W[cur][i] + dfs(i, mask | (1 << i));
+            dp[cur][mask] = Math.min(dp[cur][mask], nCost);
         }
-        System.out.println(ans);
-    }    
+        return dp[cur][mask];
+    }
 }
