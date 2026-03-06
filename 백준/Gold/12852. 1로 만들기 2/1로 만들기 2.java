@@ -14,8 +14,7 @@ class Main {
         int N = Integer.parseInt(br.readLine());
         int[] prev = new int[N + 1];
         int[] dp = new int [N + 1];
-        Arrays.fill(dp, INF);
-        dp[1] = 0;
+        
         for (int cur = 1; cur < N; cur++) {
             int nextX2 = cur * 2;
             int nextX3 = cur * 3;
@@ -23,17 +22,17 @@ class Main {
             
             int nextCost = dp[cur] + 1;
         
-            if (nextX2 <= N && dp[nextX2] > nextCost) {
+            if (nextX2 <= N && (dp[nextX2] == 0 || dp[nextX2] > nextCost)) {
                 dp[nextX2] = nextCost;
                 prev[nextX2] = cur;
             }
 
-            if (nextX3 <= N && dp[nextX3] > nextCost) {
+            if (nextX3 <= N && (dp[nextX3] == 0|| dp[nextX3] > nextCost)) {
                 dp[nextX3] = nextCost;
                 prev[nextX3] = cur;
             }
 
-            if (dp[nextPlus1] > nextCost) {
+            if (dp[nextPlus1] == 0 || dp[nextPlus1] > nextCost) {
                 dp[nextPlus1] = nextCost;
                 prev[nextPlus1] = cur;
             }
