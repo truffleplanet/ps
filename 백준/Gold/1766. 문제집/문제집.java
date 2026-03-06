@@ -44,7 +44,6 @@ class Main {
         PriorityQueue<Integer> pq = new PriorityQueue<>();
         for (int i = 1; i <= N; i++) {
             if (inDeg[i] == 0) {
-                inDeg[i] = -1;
                 pq.add(i);
             }
         }
@@ -57,7 +56,6 @@ class Main {
             for (int v : G[u]) {
                 inDeg[v]--;
                 if (inDeg[v] == 0) {
-                    inDeg[v] = -1;
                     pq.add(v);
                 }
             }
