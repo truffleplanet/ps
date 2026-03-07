@@ -72,23 +72,27 @@ class Main {
                     continue;
                 }
 
-                if (isWall[nr][nc]) {
-                    if (k < K && visited[nr][nc] > k + 1) {
-                        if (isDay) {
-                            visited[nr][nc] = k + 1;
-                            q[tail++] = encode(nr, nc, k + 1, cost + 1);
-                        } else {
-                            if (!waitAdded) {
-                                q[tail++] = encode(r, c, k, cost + 1);
-                                waitAdded = true;
-                            }
-                        }
+                // 빈 칸 일 시 
+                if (!isWall[nr][nc]) {
+                    if (visited[nr][nc] <= k) {
+                        continue;
                     }
-                } else {
-                    if (visited[nr][nc] > k) {
-                        visited[nr][nc] = k;
-                        q[tail++] = encode(nr, nc, k, cost + 1);
-                    }
+                    visited[nr][nc] = k;
+                    q[tail++] = encode(nr, nc, k, cost + 1);
+                    continue;
+                }
+
+                // 벽일 시
+                if (k >= K || visited[nr][nc] <= k + 1) {
+                    continue;
+                }
+
+                if (isDay) {
+                    visited[nr][nc] = k + 1;
+                    q[tail++] = encode(nr, nc, k + 1, cost + 1);
+                } else if (!waitAdded) {
+                    q[tail++] = encode(r, c, k, cost + 1);
+                    waitAdded = true;
                 }
             }
         }
