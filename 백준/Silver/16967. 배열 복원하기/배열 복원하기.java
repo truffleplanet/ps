@@ -38,8 +38,8 @@ class Main {
             }
         }
 
-        for (int j = Y; j < W; j++) {
-            for (int i = 0; i < X; i++) {
+        for (int i = 0; i < X; i++) {
+            for (int j = Y; j < W; j++) {
                 A[i][j] = B[i][j];
             }
         }
