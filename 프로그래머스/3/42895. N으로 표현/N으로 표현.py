@@ -2,7 +2,7 @@ def solution(N, number):
     dp = [set() for i in range(9)]
     dp[0] = 0
     dp[1] = {N}
-    dp[2] = {N+N, N*11, N-N, N*N, N/N}
+    dp[2] = {N+N, N*11, N*N, N/N}
 
 # dp[i] -> dp[i-1] +-*/ dp[1], dp[i-2] dp[2] ... 반대로 한번 더, int("N"*i) 
     for i in range(1, 9):
