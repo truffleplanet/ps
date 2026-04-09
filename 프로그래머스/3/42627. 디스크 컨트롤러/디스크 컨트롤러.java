@@ -43,27 +43,25 @@ class Solution {
         PriorityQueue<HeapNode> pq = new PriorityQueue<>();
         for (int i =0; i < N; i++) {
             int[] task = sortedJobs[i];   
-            if (task[0] <= cur) {
+            if (task[1] <= cur) {
                 pq.offer(new HeapNode(task[0], task[1], task[2]));
                 continue;
             }
 
             if (pq.isEmpty()) {
-                cur = task[0];
+                cur = task[1];
                 pq.offer(new HeapNode(task[0], task[1], task[2]));
                 continue;
             }
             
-            while (!pq.isEmpty() && cur < task[0]) {
+            while (!pq.isEmpty() && cur < task[1]) {
             HeapNode node = pq.poll();
             cur += node.exTime;
             total += cur - node.regTime;  
         }
-            if (cur < task[0]) 
-                cur = task[0];
+            if (cur < task[1]) 
+                cur = task[1];
                 pq.offer(new HeapNode(task[0], task[1], task[2]));
-            
-            
         }
         
         while (!pq.isEmpty()) {
