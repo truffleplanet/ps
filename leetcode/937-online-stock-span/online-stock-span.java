@@ -22,25 +22,27 @@ idea - 나보다 큰 값을 가진 key를 이진탐색으로 찾기
 결국 O(N^2)
 무조건 뒤에만 붙게 할 방법은 없을까? 
 
+-- 
+p_i가 입력된 시점에
+그 p_i보다 작은 p_x는 가지고 있을 필요가 없다.,
 */
 
 class StockSpanner {
-    List<Integer>  prices;
+    private Deque<int[]> stack;
+    
     public StockSpanner() {
-        this.prices = new ArrayList<>();
+        this.stack = new ArrayDeque<>();
     }
     
     public int next(int price) {
-        int j = prices.size() - 1;
-        while (j >= 0) {
-            if (prices.get(j) > price) {
-                break;
-            }
-            j--;
+        int span = 1;
+        while(!stack.isEmpty() && stack.peek()[0] <= price) {
+            span += stack.pop()[1];
         }
-        int ans = prices.size() -j;
-        prices.add(price);
-        return ans;
+        
+        stack.push(new int[] {price, span});
+
+        return span;
     }
 }
 
