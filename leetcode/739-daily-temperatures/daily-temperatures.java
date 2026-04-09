@@ -15,22 +15,13 @@ class Solution {
         Deque<Integer> stack = new ArrayDeque<>();
 
         for (int i = 0; i < temperatures.length; i++) {
-            if (stack.isEmpty()) {
-                stack.push(i);
-            } else {
-                while (!stack.isEmpty() && temperatures[stack.peek()] < temperatures[i]) {
-                    int past = stack.pop();
-                    out[past] = i - past;
-                }
-                stack.push(i);
+            while (!stack.isEmpty() && temperatures[stack.peek()] < temperatures[i]) {
+                int past = stack.pop();
+                out[past] = i - past;
             }
+                stack.push(i);
         }
         
-        while (!stack.isEmpty()) {
-            int past = stack.pop();
-            out[past] = 0;
-        }
-
         return out;
     }
 }
