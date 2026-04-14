@@ -4,30 +4,33 @@
 
 int main()
 {
-    int n{};
+  std::ios_base::sync_with_stdio(false);
+  std::cin.tie(nullptr);
+
+  int n{};
     std::cin >> n;
     std::cin.ignore();
 
     std::vector<std::string> names(n);
-    for (int i{}; i < n; i++)
+    for (auto &name : names)
     {
-        std::getline(std::cin, names[i]);
+        std::getline(std::cin, name);
     }
 
-    for (int pass{}; pass < 2; pass++)
+    for (int pass{}; pass < 2; ++pass)
     {
-      for (int i{}; i < n; i++)
+      for (auto &name: names)
       {
-        int ans{};
-        std::cout << "? " << names[i] << '\n' << std::flush;
+        int ans;
+        std::cout << "? " << name << '\n' << std::flush;
         std::cin >> ans;
         if (ans == 1)
         {
-          std::cout << "! " << names[i] << '\n' << std::flush;
+          std::cout << "! " << name << '\n' << std::flush;
           return 0;
         }
       }
     }
 
-    return 1;
+    return 0;
 }
