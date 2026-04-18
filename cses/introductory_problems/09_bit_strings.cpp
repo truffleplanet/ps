@@ -15,6 +15,8 @@ int main()
   cin >> n;
 
   cout << fastexp(2, n) << '\n';
+
+  return 0;
 }
 
 long long fastexp(long long x, long long y)
